@@ -34,7 +34,8 @@ const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
   }
 function get_post(){
-    posturl=$('#post-url').val();
+    const p = $('#post-url').val();
+    const posturl = p.split('?')[0]
     candembedurl=posturl+'/embed/'
     embedurl=candembedurl.replace('//embed','/embed')
     document.getElementById('img-holder').setAttribute('src',embedurl)
