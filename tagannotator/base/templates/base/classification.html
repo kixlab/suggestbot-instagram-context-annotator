@@ -60,7 +60,7 @@
                         <span class='btn btn-success btn-md' style='width:full' >{{context.label}}</span>
                     </div>
                     <div class='col-md-9'>
-                        <input id="tags-{{context.label}}" type="text"  class='tagsinput' data-role="tagsinput" style='width:100%;'value="" placeholder='e.g., {{context.exampletags}}'>
+                        <input id="tags-{{context.label}}" type="text"  class="tagsinput" data-role="tagsinput" style="width:100%;" value="" placeholder="e.g., {{context.exampletags}}">
                     </div>
                     <div class='col-md-1'>
                     </div>
@@ -86,7 +86,8 @@
                         <div class="btn-group btn-group-toggle buttons" data-toggle="buttons">
                             {% for context in contexts %}
                             <label class="btn btn-outline-success btn-sm btn-context">
-                                <input type="radio" autocomplete="off" value='{{context.label}}'> {{context.label}}                            </label>
+                                <input type="radio" autocomplete="off" value='{{context.label}}'> {{context.label}} </input>
+                            </label>
                             {% endfor %}
                         </div>
                 </div>
