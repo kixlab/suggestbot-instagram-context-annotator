@@ -1,0 +1,110 @@
+{% extends "annotate_base.html" %}
+{% load fontawesome %}
+{% load staticfiles %}
+{% fontawesome_stylesheet %}
+
+{% block scripts %}
+<link href="{% static "css/annotator.css" %}" rel="stylesheet"> 
+
+<script>
+    function verify_account(){
+        instaid=$('#instagramID').val();
+        profileurl='https://www.instagram.com/'+instaid+'/'
+        var exist, public, suspicious=false;
+
+        // check if exist 
+        // check if public
+        // check if suspicious 
+        $.ajax({
+        async: false,
+        type: "GET",
+        global: false,
+        dataType: 'html',
+        url:profileurl,
+        data:{},
+        success: function(response){
+            var metas=$(response).find("meta").prevObject;
+            var responsetext=$(response).text();
+            for (let i = 0; i < metas.length; i++) {
+                curmeta=metas[i];
+                var attr = $(curmeta).attr('name');
+                if (typeof attr !== typeof undefined && attr !== false) {
+                    if(attr=='description'){
+                        exist=true;
+                        num_followers=$(curmeta).attr('content').split()[0];
+                        suspicous=isNaN(num_followers);
+                    }else{
+                        exist=false;
+                    }
+                }
+            }
+            if(exist){
+                userid=responsetext.split("profilePage_")[1].split('"')[0]
+                if (responsetext.toLowerCase().indexOf('"is_private":false') >= 0){
+                    public=true;
+                }
+                if (responsetext.toLowerCase().indexOf('"is_verified":true') >= 0){
+                    suspicious=true;
+                }
+            }
+            verify(exist, public, suspicious, userid);
+    },
+    error: function(x, s, e){
+            verify(false,false, false,'');
+    }
+     
+    });
+    }
+
+    function verify(exist, public, suspicious,userid){
+        if(!exist){
+            window.alert("account does not exist")
+        }else{
+            if(!public){
+                window.alert("account is not a public")
+            }
+            else{
+                window.alert("account verified")
+                save_account(suspicious, userid);
+            }
+        }
+    }
+
+    function save_account(suspicious, userid){
+        instaid=userid
+        $.ajax({
+        url:'./saveaccount/',
+        method: 'POST',
+        data: {'instaid':instaid, 'suspicious':suspicious}
+        });
+        sleep(500).then(()=>{
+            window.location.href='../postinfo'
+        })
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class='row'>
+    <div class="col-1" ></div>
+        <div class="col-10" >
+            <div>
+                <h3 style='margin-top:100px; margin-bottom:50px;'>Please submit your Instagram User ID.</h3>
+                <p>This step is to verify that your account 1) exists and 2) is public. </p>
+                <div class="form-group row">
+                        <div class='col-sm-3'></div>
+                        <label for="instagramID" class="col-sm-2 col-form-label">Instagram User ID</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="instagramID" placeholder="Your Instagram ID">
+                        </div>
+                        <div class='col-sm-2'>
+                            <input type="submit" class="btn btn-info" value="Verify" onclick='verify_account()' />
+                        </div>
+                        <div class='col-sm-3'></div>
+                </div>
+            </div>
+        </div>
+    <div class="col-1"></div>
+  
+</div>
+{% endblock %}

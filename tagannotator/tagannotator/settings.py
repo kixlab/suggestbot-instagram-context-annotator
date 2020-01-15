@@ -74,6 +74,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'tagannotator.wsgi.application'
 
+
+SITE_URL = "http://127.0.0.1:8000"
+
 # Login default setup 
 LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout/'
@@ -131,3 +134,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

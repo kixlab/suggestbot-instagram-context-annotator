@@ -34,7 +34,8 @@ const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
   }
 function get_post(){
-    posturl=$('#post-url').val();
+    const p = $('#post-url').val();
+    const posturl = p.split('?')[0]
     candembedurl=posturl+'/embed/'
     embedurl=candembedurl.replace('//embed','/embed')
     document.getElementById('img-holder').setAttribute('src',embedurl)
@@ -137,7 +138,7 @@ function renderpreview_generation(){
     var datapreview=[];
     for (var k=0; k<contextholders.length; k++){
         curcontextholder=contextholders[k]
-        curcontext=curcontextholder.firstChild.firstChild.innerText;
+        curcontext=curcontextholder.firstElementChild.firstElementChild.innerText;
         curgentags=curcontextholder.getElementsByClassName('tagsinput')[0].previousSibling.getElementsByClassName('label-info');
         for (var z=0; z<curgentags.length; z++){
             curgentag=curgentags[z].innerText;
@@ -171,7 +172,27 @@ function save_classification(){
 }
 
 function save_generation(){
-    console.log('Hi');
+    tagholders=document.getElementsByClassName('context-holder');
+    taglist=[];
+    contextlist=[];
+    for (var k=0; k<contextholders.length; k++){
+        curcontextholder=contextholders[k]
+        curcontext=curcontextholder.firstElementChild.firstElementChild.innerText;
+        curgentags=curcontextholder.getElementsByClassName('tagsinput')[0].previousSibling.getElementsByClassName('label-info');
+        for (var z=0; z<curgentags.length; z++){
+            curgentag=curgentags[z].innerText;
+            taglist.push(curgentag);
+            contextlist.push(curcontext);
+        }
+    }
+    postpk=document.getElementById('img-holder').getAttribute('value');
+    $.ajax({
+        url:'classification/savegeneratedtag/'+postpk,
+        method: 'POST',
+        data: {'tags[]':taglist, 'contexts[]':contextlist}
+    });
+
+    window.alert('Generated tags saved')
 }
 
 function show_generation(){
@@ -193,6 +214,8 @@ function show_classification(){
     document.getElementById('generation-div').style.display='none';    
 }
 
+
+// BELOW: TAGSINPUT operations 
 var defaultOptions = {
     tagClass: function(item) {
     return 'label label-info';
@@ -331,7 +354,6 @@ TagsInput.prototype = {
     self.findInputWrapper().before($tag);
     $tag.after(' ');
 
-    renderpreview_generation()
     // add <option /> if item represents a value not present in one of the <select />'s options
     if (self.isSelect && !$('option[value="' + encodeURIComponent(itemValue) + '"]',self.$element)[0]) {
         var $option = $('<option selected>' + htmlEncode(itemText) + '</option>');
@@ -348,6 +370,7 @@ TagsInput.prototype = {
         self.$container.addClass('bootstrap-tagsinput-max');
 
     self.$element.trigger($.Event('itemAdded', { item: item, options: options }));
+    renderpreview_generation();
     },
 
     /**
@@ -386,7 +409,7 @@ TagsInput.prototype = {
         self.$container.removeClass('bootstrap-tagsinput-max');
 
     self.$element.trigger($.Event('itemRemoved',  { item: item, options: options }));
-    renderpreview_generation()
+    renderpreview_generation();
     },
 
     /**

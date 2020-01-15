@@ -14,3 +14,8 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'password']
+
+class PhotoForm(forms.ModelForm):
+    class Meta:
+        model = Photo
+        fields = ('file', )

@@ -1,0 +1,110 @@
+{% extends "annotate_base.html" %}
+{% load fontawesome %}
+{% load staticfiles %}
+{% fontawesome_stylesheet %}
+
+{% block scripts %}
+<link href="{% static "css/annotator.css" %}" rel="stylesheet"> 
+
+<script>
+    function verify_post(){
+        p=$('#postURL').val();
+        posturl = p.split('?')[0]
+        // check if accessible
+        var accessible = false;
+
+        $.ajax({
+        async: false,
+        type: "GET",
+        global: false,
+        dataType: 'html',
+        url:posturl,
+        data:{},
+        success: function(response){
+            var metas=$(response).find("meta").prevObject;
+            userid='';
+            for (let i = 0; i < metas.length; i++) {
+                curmeta=metas[i];
+                var attr = $(curmeta).attr('property');
+                if (typeof attr !== typeof undefined && attr !== false) {
+                    if(attr=='instapp:owner_user_id'){
+                        userid=$(curmeta).attr('content');
+                        break;
+                    }
+                }
+            }
+            check_post(posturl, userid);
+    },
+    error: function(){
+        window.alert("URL is not valid. ")
+    }
+     
+    });
+    }
+    function check_post(posturl, userid){
+
+        // check if belongs to the user
+        $.ajax({
+            url:'checkpost/',
+            type: "POST",
+            dataType: "json",
+            data:{'userid':userid, 'posturl':posturl},
+            success: function(response){
+                result=response['checkresult'];
+                switch(result){
+                    case 'invaliduser':
+                        window.alert("This post is not owned by you");
+                        break;
+                    case 'duplicated':
+                        window.alert("This post has been used before. Please use another post.");
+                        break;
+                    case 'validuser':
+                        window.alert("PostURL validated.")
+                        save_post(posturl);
+                        break;
+                }
+            }
+
+        });        
+    }
+
+    function save_post(posturl){
+        postid=posturl.split('/')[4];
+        $.ajax({
+            url:'addpost/',
+            method: 'POST',
+            data: {'posturl':posturl, 'source':'instagram'},
+            success: function(response){
+                postpk=response['postpk'];
+                window.location.href='../post/'+String(postpk)+'/classification/'+postid+'/';
+        }
+        });
+    }
+
+</script>
+{% endblock %}
+
+{% block content %}
+<div class='row'>
+    <div class="col-1" ></div>
+        <div class="col-10" >
+            <div>
+                <h3 style='margin-top:100px; margin-bottom:50px;'>Copy and paste url of post that you want to use.</h3>
+                <p>This step verifies whether the post you submitted is 1) accessible and 2) not used before. </p>
+                <div class="form-group row">
+                        <div class='col-sm-2'></div>
+                        <label for="postURL" class="col-sm-2 col-form-label">Post URL</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="postURL" placeholder="Copy and paste url of post that you want to use.">
+                        </div>
+                        <div class='col-sm-2'>
+                            <input type="submit" class="btn btn-info" value="Check" onclick='verify_post()' />
+                        </div>
+                        <div class='col-sm-2'></div>
+                </div>
+            </div>
+        </div>
+    <div class="col-1"></div>
+  
+</div>
+{% endblock %}

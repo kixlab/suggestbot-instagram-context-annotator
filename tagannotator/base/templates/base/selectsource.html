@@ -1,0 +1,38 @@
+{% extends "annotate_base.html" %}
+{% load fontawesome %}
+{% load staticfiles %}
+{% fontawesome_stylesheet %}
+
+{% block scripts %}
+<link href="{% static "css/annotator.css" %}" rel="stylesheet"> 
+{% endblock %}
+
+{% block content %}
+<div class='row'>
+    <div class="col-1" ></div>
+    <div class="col-10" >
+        <h3 style='margin-top:50px; margin-bottom:10px;'>Select image source that you want to use. </h3>
+        <div class='row'>
+            <div class='col-6'>
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                      <h5 class="card-title">Use Instagram Posts</h5>
+                      <p class="card-text">Blah Blah.</p>
+                      <a href="./accountinfo/" class="btn btn-primary">Use Instagram posts.</a>
+                    </div>
+                  </div>
+            </div>
+            <div class='col-6'>
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                      <h5 class="card-title">Use photos that you took.</h5>
+                      <p class="card-text">Blah Blah.</p>
+                      <a href="./choosedevice/" class="btn btn-primary">Use photos that I took.</a>
+                    </div>
+                  </div>
+            </div>        </div>
+    </div>
+    <div class="col-1"></div>
+  
+</div>
+{% endblock %}
