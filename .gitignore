@@ -1,7 +1,7 @@
 venv
 __pycache__
 tagannotator/media
-tagannotaor/db.sqlite3
+tagannotator/db.sqlite3
 Include
 Lib
 Scripts

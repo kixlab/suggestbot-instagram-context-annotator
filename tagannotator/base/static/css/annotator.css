@@ -203,9 +203,9 @@ input:checked + .slider:before {
   float:right;
 }
 
-.img_preview{
+.img_preview {
   max-width: 75px;
-  max-height:75px;
+  max-height: 75px;
 }
 
 .img_preview_holder{

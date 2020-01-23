@@ -7,10 +7,10 @@
 <link href="{% static "css/annotator.css" %}" rel="stylesheet"> 
 
 <script>
-var posts=[];
+var posturls=[];
     function add_post(){
-        p=$('posturl_input').val();
-        posturl = p.split('?')[0];
+        const p=$('#posturl_input').val();
+        const posturl = p.split('?')[0];
         verify_post(posturl);
 
     }
@@ -18,30 +18,30 @@ var posts=[];
         // check if accessible
         var accessible = false;
         $.ajax({
-        async: false,
-        type: "GET",
-        global: false,
-        dataType: 'html',
-        url:posturl,
-        data:{},
-        success: function(response){
-            var metas=$(response).find("meta").prevObject;
-            userid='';
-            for (let i = 0; i < metas.length; i++) {
-                curmeta=metas[i];
-                var attr = $(curmeta).attr('property');
-                if (typeof attr !== typeof undefined && attr !== false) {
-                    if(attr=='instapp:owner_user_id'){
-                        userid=$(curmeta).attr('content');
-                        break;
+            async: false,
+            type: "GET",
+            global: false,
+            dataType: 'html',
+            url:posturl,
+            data:{},
+            success: function(response){
+                var metas=$(response).find("meta").prevObject;
+                userid='';
+                for (let i = 0; i < metas.length; i++) {
+                    curmeta=metas[i];
+                    var attr = $(curmeta).attr('property');
+                    if (typeof attr !== typeof undefined && attr !== false) {
+                        if(attr=='instapp:owner_user_id'){
+                            userid=$(curmeta).attr('content');
+                            break;
+                        }
                     }
                 }
-            }
-            check_post(posturl, userid);
-    },
-    error: function(){
-        window.alert("URL is not valid. ")
-    }
+                check_post(posturl, userid);
+        },
+        error: function(){
+            window.alert("URL is not valid. ")
+        }
      
     });
     }

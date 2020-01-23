@@ -47,7 +47,7 @@ function render_table(){
             for (var w=0; w<photos_list.length; w++){
                 photo=photos_list[w];
                 table.append(
-                "<tr class='imgrow' id=photo_"+String(photo["pk"])+"><td>"+ String(w+1) +"</td><td><span class='img_preview_holder'><img class='img_preview' src='"+photo["url"] +"'></span>" + photo["filename"] + "</a><span class='btn trashbtn'><i class='fa fa-trash'></i></span></td></tr>"
+                "<tr class='imgrow' id=photo_"+String(photo["pk"])+"><td>"+ String(w+1) +"</td><td><img class='img_preview' src='"+photo["url"] +"'>" + photo["filename"] + "</a><span class='btn trashbtn'><i class='fa fa-trash'></i></span></td></tr>"
                 )
             }
             add_deletelistener()

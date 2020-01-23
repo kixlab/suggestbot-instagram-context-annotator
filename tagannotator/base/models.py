@@ -24,8 +24,8 @@ class Post(models.Model):
         return self.session.user.username +" - "+self.source +str(self.pk)
 
 class InstagramAccount(models.Model):
-    user=models.ForeignKey(User, on_delete=models.CASCADE)
-    session=models.ForeignKey(Session, on_delete=models.CASCADE)
+    user=models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    session=models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
     hashed_account_id=models.CharField(max_length=200)
     suspicious=models.BooleanField(default=False)
     duplicated=models.BooleanField(default=False)
