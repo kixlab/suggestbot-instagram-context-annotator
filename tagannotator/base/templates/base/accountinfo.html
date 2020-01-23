@@ -40,6 +40,7 @@
             }
             if(exist){
                 userid=responsetext.split("profilePage_")[1].split('"')[0]
+                // Why is this user id '1512946712' for me?
                 if (responsetext.toLowerCase().indexOf('"is_private":false') >= 0){
                     public=true;
                 }

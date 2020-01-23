@@ -26,7 +26,7 @@ var posturls=[];
             data:{},
             success: function(response){
                 var metas=$(response).find("meta").prevObject;
-                userid='';
+                var userid='';
                 for (let i = 0; i < metas.length; i++) {
                     curmeta=metas[i];
                     var attr = $(curmeta).attr('property');
@@ -79,13 +79,14 @@ var posturls=[];
     function render_table(){
     table=$("#post_table tbody");
     table.empty();
-    for (var w=0; w<posturls.length; w++){
-        posturl=posturls[w];
-        table.append(
-            "<tr class='postrow'><td>"+ String(w+1) +"</td><td>"+posturl+"<span class='btn trashbtn'><i class='fa fa-trash'></i></span></td></tr>"
-        )
+        for (var w=0; w<posturls.length; w++){
+            const posturl=posturls[w];
+            table.append(
+                "<tr class='postrow'><td>"+ String(w+1) +"</td><td>"+posturl+"<span class='btn trashbtn'><i class='fa fa-trash'></i></span></td></tr>"
+            )
+        }
         add_deletelistener();
-    }
+
     }
 
     function save_posts(){
