@@ -39,13 +39,14 @@ function show_tags(tags){
     })}
 
     // donotuses event listenrs
-    toggles = document.getElementsByClassName('donotuse');
-    for (var w=0; w<xtoggles.length; w++){
-        curxbtn=xbtns[w];
+    donotusebtns= document.getElementsByClassName('donotuse');
+    for (var w=0; w<donotusebtns.length; w++){
+        curxbtn=donotusebtns[w];
         curxbtn.addEventListener("click", function(){
-            sleep(300).then(()=>{donotuse(this)})
+            sleep(300).then(()=>{renderpreview_classification()
+            })
     })}
-}
+ }
 function show_tag(tag, tagno){
     labelingpanel=document.getElementById('classification-holder');
     newtagholder=$("#skeleton-tag-holder" ).clone();
@@ -59,67 +60,63 @@ function show_tag(tag, tagno){
 }
 
 function renderpreview_classification(){
+    data=generate_data();
+    previewtable=document.getElementById('preview-table');
+    previewnodata=document.getElementById('preview-nodata');
+    if (data.length!=0){
+        previewnodata.style='display:none;'
+        previewtbody=document.getElementById('preview-rows');
+        previewtbody.innerHTML='';
+        for(var i=0;i<data.length;i++){
+            hashtagtext=data[i]["hashtag"]
+            contextlabels=data[i]["context"].join(", ");
+            newrow=previewtbody.insertRow(previewtbody.rows.length);
+            newno=newrow.insertCell(0);
+            newhashtag=newrow.insertCell(1);
+            newcontexts=newrow.insertCell(2);
+            newno.appendChild(document.createTextNode(String(i+1)));
+            newhashtag.appendChild(document.createTextNode('#'+hashtagtext));
+            newcontexts.appendChild(document.createTextNode(contextlabels));
+        }
+        previewtable.style='display:block';
+    }
+    else{
+        previewtable.style='display:none;';
+        previewnodata.style='display:block';
+    }
+
+}
+
+function generate_data(){
     tagholders=document.getElementsByClassName('tag-holder');
-    var datapreview=[];
+    var data=[];
     for (var k=0; k<tagholders.length; k++){
         curtagholder=tagholders[k];
-        selection=curtagholder.getElementsByTagName('div')[1].getElementsByTagName('div')[0].getElementsByTagName('div')[0].getElementsByClassName('active');
-
-        if(selection.length!=0){
-            tagtext=curtagholder.getElementsByTagName('div')[0].getElementsByTagName('span')[1].innerText;
-            context=selection[0].innerText;
-            datapreview.push({"tag":tagtext,"context":context});
+        tagtext=curtagholder.getElementsByClassName('tagtext')[0].getElementsByTagName('span')[1].innerText;
+        selection=curtagholder.getElementsByClassName('contextbtns')[0].firstElementChild.firstElementChild.getElementsByClassName('active');
+        donotuse=curtagholder.getElementsByClassName('donotuse')[0].firstElementChild;
+        if(donotuse.checked){
+            contexts=[]
+            if(selection.length!=0){
+                for (var i=0;i<selection.length;i++){
+                    context=selection[i].innerText;
+                    contexts.push(context)
+                }
+                data.push({hashtag:tagtext,context:contexts});
+            }
         }
     }
-    document.getElementById('classification-preview').innerText=JSON.stringify(datapreview);
+    return data
 }
-
-function donotuse(xbtn){
-    tagholder=xbtn.parentElement.parentElement;
-    tagholder.parentNode.removeChild(tagholder);
-    renderpreview_classification()
-}
-
 
 function save_classification(){
-    tagholders=document.getElementsByClassName('tag-holder');
-    taglist=[];
-    contextlist=[];
-    for (var k=0; k<tagholders.length; k++){
-        curtagholder=tagholders[k];
-        selection=curtagholder.getElementsByTagName('div')[1].getElementsByTagName('div')[0].getElementsByTagName('div')[0].getElementsByClassName('active');
-        if(selection.length!=0){
-            tagtext=curtagholder.getElementsByTagName('div')[0].getElementsByTagName('span')[1].innerText;
-            context=selection[0].innerText;
-            taglist.push(tagtext);
-            contextlist.push(context);
-        }
-    }
-    postpk=document.getElementById('img-holder').getAttribute('value');
+    tagcontextdata=generate_data()
+    console.log(data)
     $.ajax({
-        url:'classification/savetagcontext/'+postpk,
+        url:'savetagcontext/',
         method: 'POST',
-        data: {'tags[]':taglist, 'contexts[]':contextlist}
+        dataType: 'json',
+        data: {'tagcontext':JSON.stringify(tagcontextdata), 'madeby':'post'}
     });
-    sleep(500).then(()=>{show_generation();})
     
-}
-
-function show_generation(){
-    document.getElementById('classification-save').style.display='none';
-    document.getElementById('classification-prompt').style.display='none';
-    document.getElementById('classification-div').style.display='none';
-    document.getElementById('generation-save').style.display='';
-    document.getElementById('generation-prompt').style.display='';
-    document.getElementById('generation-div').style.display='';   
-    $("input[data-role=tagsinput], select[multiple][data-role=tagsinput]").tagsinput();
-}
-
-function show_classification(){
-    document.getElementById('classification-save').style.display='';
-    document.getElementById('classification-prompt').style.display='';
-    document.getElementById('classification-div').style.display='';
-    document.getElementById('generation-save').style.display='none';
-    document.getElementById('generation-prompt').style.display='none';
-    document.getElementById('generation-div').style.display='none';    
 }

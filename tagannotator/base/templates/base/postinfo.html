@@ -7,12 +7,16 @@
 <link href="{% static "css/annotator.css" %}" rel="stylesheet"> 
 
 <script>
-    function verify_post(){
-        p=$('#postURL').val();
-        posturl = p.split('?')[0]
+var posts=[];
+    function add_post(){
+        p=$('posturl_input').val();
+        posturl = p.split('?')[0];
+        verify_post(posturl);
+
+    }
+    function verify_post(posturl){
         // check if accessible
         var accessible = false;
-
         $.ajax({
         async: false,
         type: "GET",
@@ -42,67 +46,114 @@
     });
     }
     function check_post(posturl, userid){
-
-        // check if belongs to the user
-        $.ajax({
-            url:'checkpost/',
-            type: "POST",
-            dataType: "json",
-            data:{'userid':userid, 'posturl':posturl},
-            success: function(response){
-                result=response['checkresult'];
-                switch(result){
-                    case 'invaliduser':
-                        window.alert("This post is not owned by you");
-                        break;
-                    case 'duplicated':
-                        window.alert("This post has been used before. Please use another post.");
-                        break;
-                    case 'validuser':
-                        window.alert("PostURL validated.")
-                        save_post(posturl);
-                        break;
+        if (posturls.includes(posturl)){        
+            // check if duplicate w/ posts uploaded in the current page
+            window.alert("no duplicated post allowed")
+        }else{
+            // check if this post belongs to the user + check if duplicate w/ previous posts
+            $.ajax({
+                url:'checkpost/',
+                type: "POST",
+                dataType: "json",
+                data:{'userid':userid, 'posturl':posturl},
+                success: function(response){
+                    result=response['checkresult'];
+                    switch(result){
+                        case 'invaliduser':
+                            window.alert("This post is not owned by you");
+                            break;
+                        case 'duplicated':
+                            window.alert("This post has been used before. Please use another post.");
+                            break;
+                        case 'validuser':
+                            posturls.push(posturl);
+                            render_table();
+                            $('#posturl_input').val('')
+                            break;
+                    }
                 }
-            }
-
-        });        
-    }
-
-    function save_post(posturl){
-        postid=posturl.split('/')[4];
-        $.ajax({
-            url:'addpost/',
-            method: 'POST',
-            data: {'posturl':posturl, 'source':'instagram'},
-            success: function(response){
-                postpk=response['postpk'];
-                window.location.href='../post/'+String(postpk)+'/classification/'+postid+'/';
+            });        
         }
-        });
     }
 
+    function render_table(){
+    table=$("#post_table tbody");
+    table.empty();
+    for (var w=0; w<posturls.length; w++){
+        posturl=posturls[w];
+        table.append(
+            "<tr class='postrow'><td>"+ String(w+1) +"</td><td>"+posturl+"<span class='btn trashbtn'><i class='fa fa-trash'></i></span></td></tr>"
+        )
+        add_deletelistener();
+    }
+    }
+
+    function save_posts(){
+        // save instagram post objects + post objects 
+        for (var w=0; w<posturls.length; w++){
+            posturl=posturls[w];
+            $.ajax({
+                url:'addpost/',
+                method: 'POST',
+                data: {'posturls':posturls, 'source':'instagram'},
+                success: function(response){
+                    sessionStorage.setItem('posturls', posturls);
+                    window.location.href='../instagram/addtags/1/';   
+            }
+            });
+        }  
+    }
 </script>
 {% endblock %}
 
 {% block content %}
+{% include 'base/progressbar.html' %}
+
+<!-- 여기도 tag generation 처럼 맨 위에 'add' 버튼 두고, 밑에 table로 올라온거 보여주고, 삭제할 수 잇도록 -->
+<!-- 그리고 Next 할 때 갯수 세서, 5개 이상일때만 통과시키기  -->
 <div class='row'>
     <div class="col-1" ></div>
         <div class="col-10" >
             <div>
                 <h3 style='margin-top:100px; margin-bottom:50px;'>Copy and paste url of post that you want to use.</h3>
                 <p>This step verifies whether the post you submitted is 1) accessible and 2) not used before. </p>
-                <div class="form-group row">
-                        <div class='col-sm-2'></div>
-                        <label for="postURL" class="col-sm-2 col-form-label">Post URL</label>
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control" id="postURL" placeholder="Copy and paste url of post that you want to use.">
+                <div class='row'>
+                    <div class='col-md-3'>
+                    </div>
+                    <div class='col-md-6'>
+                        <div class="holder">
+                            <div>
+                            <div class="input-group">
+                                <div class='input-group-prepend'><span class="input-group-text">Post URL</span>
+                                </div>   
+                                 <input type="text" class="form-control" placeholder="Copy and paste url of post that you want to use." id='posturl_input' aria-describedby="basic-addon2">
+                                    <div class="input-group-append">
+                                      <button class="btn btn-outline-info" type="button"  onclick='add_post()'>Add</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class='col-sm-2'>
-                            <input type="submit" class="btn btn-info" value="Check" onclick='verify_post()' />
-                        </div>
-                        <div class='col-sm-2'></div>
+                    </div>   
+                    <div class='col-md-3'></div>
+                </div>
+                <table id="post_table" class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Post URL</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>  
+            </div>
+            <div class="row">
+                <div class='col-sm-11'></div>
+                <div class='col-sm-1'>
+                    <input type="submit" class="btn btn-info" value="Next" onclick='save_posts()' />
                 </div>
             </div>
+
         </div>
     <div class="col-1"></div>
   

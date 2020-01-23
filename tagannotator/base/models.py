@@ -9,6 +9,7 @@ class Session(models.Model):
     starttime=models.DateTimeField(auto_now_add=True, blank=True)
     endtime=models.DateTimeField(default=None, blank=True)
     status=models.BooleanField(default=False, blank=True)
+    token=models.CharField(max_length=50, default=None, null=True, blank=True)
     def __str__(self):
         return self.user.username+"-"+str(self.starttime)
 
@@ -24,6 +25,7 @@ class Post(models.Model):
 
 class InstagramAccount(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE)
+    session=models.ForeignKey(Session, on_delete=models.CASCADE)
     hashed_account_id=models.CharField(max_length=200)
     suspicious=models.BooleanField(default=False)
     duplicated=models.BooleanField(default=False)
@@ -43,9 +45,9 @@ class Tag(models.Model):
         ('user', 'user'),
         ('post', 'post')
     ]
-    madeby=models.CharField(max_length=20, choices=MADEBY, null=True, blank=True)
+    madeby=models.CharField(max_length=20, choices=MADEBY, null=True, blank=True, default='post')
     def __str__(self):
-        return str(self.post.pk) +" - "+ self.text +" - "+self.madeat
+        return str(self.post.pk) +" - "+ self.text +" - "+self.madeby
 
 class Mapping(models.Model):
     tag=models.ForeignKey(Tag, on_delete=models.CASCADE)
@@ -58,10 +60,13 @@ class InstaPost(models.Model):
     hashed_post_url=models.CharField(max_length=200)
     post=models.ForeignKey(Post, on_delete=models.CASCADE, blank=True)
     def __str__(self):
-        return self.post + " - " +self.hashed_post_url
+        return str(self.post.pk) + " - " +self.hashed_post_url
 
 def user_directory_path(instance, filename):
-    return 'base/user_{0}/{1}'.format(instance.user.id,filename)
+    userid=instance.session.user.username
+    sessionpk=instance.session.pk
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return 'user_{0}/session_{1}/{2}'.format(userid,sessionpk, filename)
 
 class Photo(models.Model):
     session=models.ForeignKey(Session, on_delete=models.CASCADE, blank=True, null=True)
@@ -70,12 +75,12 @@ class Photo(models.Model):
     file = models.ImageField(upload_to=user_directory_path)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return self.session +" - " + self.file
+        return self.file.name.split('/')[2]
 
-class UsedPhoto(models.Model):
+class UploadPost(models.Model):
     uploadedphoto=models.ForeignKey(Photo, on_delete=models.CASCADE, blank=True)
     post=models.ForeignKey(Post, on_delete=models.CASCADE, blank=True)
 
     def __str__(self):
-        return self.post +" - " + self.uploadedphoto
+        return str(self.post) +" - " + str(self.uploadedphoto)
 

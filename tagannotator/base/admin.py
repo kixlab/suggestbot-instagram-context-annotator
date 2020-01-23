@@ -8,6 +8,6 @@ admin.site.register(Context)
 admin.site.register(Tag)
 admin.site.register(Mapping)
 admin.site.register(InstaPost)
-admin.site.register(UsedPhoto)
+admin.site.register(UploadPost)
 admin.site.register(Photo)
 

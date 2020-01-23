@@ -1,0 +1,30 @@
+{% extends "annotate_base.html" %}
+{% load fontawesome %}
+{% load staticfiles %}
+{% fontawesome_stylesheet %}
+
+{% block scripts %}
+<link href="{% static "css/annotator.css" %}" rel="stylesheet"> 
+{% endblock %}
+
+{% block content %}
+<div class='row'>
+    <div class="col-1" ></div>
+    <div class="col-10" >
+        <h3 style='margin-top:50px; margin-bottom:10px;'>How to do the classification </h3>
+        <div class='row'>
+            <div class='col-12s'>
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                      <h5 class="card-title">Instruction for classification</h5>
+                      <p class="card-text">Instruction here. Blah Blah </p>
+                      <a href="../1/" class="btn btn-primary">Go to classification.</a>
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-1"></div>
+  
+</div>
+{% endblock %}

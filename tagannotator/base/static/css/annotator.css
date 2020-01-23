@@ -197,3 +197,34 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+.trashbtn{
+  color:#ED2939;
+  float:right;
+}
+
+.img_preview{
+  max-width: 75px;
+  max-height:75px;
+}
+
+.img_preview_holder{
+  float:left;
+  width:85px;
+}
+
+.hashtag{
+  color:blue;
+  border-radius: 0.5rem;
+  border: 1px solid;
+  border-color: blue;
+  height: 20px;
+  padding:5px;
+  margin: 5px;
+  display:inline-table;
+}
+
+.hashtag-noborder{
+  color:blue;
+  font-size:18px;
+}

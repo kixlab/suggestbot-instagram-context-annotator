@@ -1,39 +1,6 @@
 $(document).ready(function(){
-     // jQuery AJAX set up
-     function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie != '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    var csrftoken = getCookie('csrftoken');
-    function csrfSafeMethod(method) {
-        // these HTTP methods do not require CSRF protection
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            }
-        }
-    });
-    /////////////////////////////////////////
+    render_table()
 })
-
-const sleep = (milliseconds) => {
-    return new Promise(resolve => setTimeout(resolve, milliseconds))
-  }
-
 $(function () {
 
 $(".js-upload-photos").click(function () {
@@ -59,12 +26,77 @@ $("#fileupload").fileupload({
     },
     done: function (e, data) {
     if (data.result.is_valid) {
-        $("#gallery tbody").prepend(
-        "<tr><td><a href='" + data.result.url + "'>" + data.result.name + "</a></td></tr>"
-        )
+        render_table();
     }
     }
 
 });
-
 });
+
+function render_table(){
+    table=$("#gallery tbody");
+    table.empty();
+    $.ajax({
+        type: "GET",
+        url:'../upload/getphotos/',
+        dataType: 'json',
+        success: function(photosdata){
+            photos_list=JSON.parse(photosdata);
+            table=$("#gallery tbody");
+            table.empty();
+            for (var w=0; w<photos_list.length; w++){
+                photo=photos_list[w];
+                table.append(
+                "<tr class='imgrow' id=photo_"+String(photo["pk"])+"><td>"+ String(w+1) +"</td><td><span class='img_preview_holder'><img class='img_preview' src='"+photo["url"] +"'></span>" + photo["filename"] + "</a><span class='btn trashbtn'><i class='fa fa-trash'></i></span></td></tr>"
+                )
+            }
+            add_deletelistener()
+            }
+        });
+
+    
+}
+
+function add_deletelistener(){
+    trashbtns=document.getElementsByClassName('trashbtn');
+    for (var w=0; w<trashbtns.length; w++){
+        curbtn=trashbtns[w];
+        curbtn.addEventListener("click", function(){
+            sleep(100).then(()=>{
+                delete_row(this)
+            })
+    })}
+}
+
+function delete_row(elem){
+    photopk=elem.parentNode.parentNode.id.split('_')[1];
+    $.ajax({
+        url:'../upload/delete/',
+        method: 'POST',
+        dataType:'json',
+        data: {'photopk':photopk}
+        
+    });
+    sleep(300).then(()=>{
+    render_table();});
+
+}
+
+
+function finish_upload(){
+    // make post object for each image 
+    $.ajax({
+        url:'../upload/createposts/',
+        method: 'GET',
+        dataType:'json',
+        success: function(response){
+            result=response['result'];
+            if(result){
+                window.location.href='../upload/generatetags/1/';
+            }
+            else{
+                console.log('Not enough images uploaded.')
+            }
+        }
+    });
+}

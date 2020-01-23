@@ -1,0 +1,75 @@
+{% extends "annotate_base.html" %}
+{% load fontawesome %}
+{% load staticfiles %}
+{% fontawesome_stylesheet %}
+
+{% block scripts %}
+<link href="{% static "css/annotator.css" %}" rel="stylesheet"> 
+
+<script src="{% static "js/tagsinput.js" %}" type="text/javascript"> </script>
+
+
+{% endblock %}
+
+{% block content %}
+{% include 'base/progressbar.html' %}
+<div class='row' style='max-height:50vh;'>
+    <div class="col-1" ></div>
+    <div class="col-10" >
+        <h3 style='margin-top:50px; margin-bottom:30px;'>Make 5+ hashtags as if you are uploading this image to your Instagram. </h3>
+            <div class='row'>
+            <div class='col-md-4' id="post-holder" class="holder iframe-container">
+                <img src='{{ post.uploadedphoto.file.url }}'style='max-height:60vh;max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px)'>
+            </div>
+                <div class='col-md-8' style='padding-left:20px;'>
+                <div class='row'>
+                    <div class='col-md-3'>
+                    </div>
+                    <div class='col-md-6'>
+                        <div class="holder">
+                            <div>
+                            <div class="input-group">
+                                <div class='input-group-prepend'><span class="input-group-text">#</span>
+                                </div>   
+                                 <input type="text" class="form-control" placeholder="hashtag" id='hashtag_input' aria-label="hashtag" aria-describedby="basic-addon2">
+                                    <div class="input-group-append">
+                                      <button class="btn btn-outline-info" type="button"  onclick='add_tag()'>Enter</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>   
+                    <div class='col-md-3'></div>
+ 
+                </div>
+                <div class='row'>
+                    <div class='col-md-12'>
+                        <div class="holder">
+                            Hashtags you generated:
+                            <div class="card">
+                                    <div class="card-body" style='min-height:80px;'>
+                                        <div id='hashtag-preview'>
+
+                                        </div>
+                                        <div id='preview-nodata'>
+                                            <p style='text-align:center'>No hashtags</p>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id='classification-save'>
+                <div style='float:right;'>    
+                    {% if  postorder > 1 %}
+                    <button type='button' class='btn btn-primary btn-md' id='btn_hashtags_prev' style="margin-top:3px;" onclick='window.location.href="../"+String({{ postorder }}-1)'>Prev</button>
+                    {% endif %}
+                    <button type='button' class='btn btn-primary btn-md' id='btn_hashtag_next' style="margin-top:3px;" onclick='save_hashtags({{postorder}})'>Next</button>
+                </div> 
+            </div>
+        </div>
+    </div>
+    <div class="col-1"></div>      
+</div>
+
+{% endblock %}
