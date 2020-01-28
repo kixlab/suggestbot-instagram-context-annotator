@@ -1,5 +1,3 @@
-var hashtags=[];
-
 $(document).ready(function(){
     document.getElementById("hashtag_input")
     .addEventListener("keyup", function(event) {
@@ -20,7 +18,7 @@ function show_hashtags(hashtags){
         hashtagsholder=document.getElementById('hashtag-preview')
         hashtagsholder.innerHTML='';
         for (var k=0; k<hashtags.length; k++){
-            curtag=hashtags[k];
+            curtag=hashtags[k][0];
             newtag=document.createElement("span");
             newtag.classList.add("hashtag")
             newtag.innerHTML='#'+curtag+'<span class="btn deletebtns" onclick="remove_tag(this)" style="padding:3px;padding-top:0px;color:blue;"><i class="fa fa-times"></i></span>'
@@ -34,10 +32,18 @@ function show_hashtags(hashtags){
 
 function add_tag(){
     newtagtext=$('#hashtag_input').val();
-    if (hashtags.includes(newtagtext)){
+    duplicate=false;
+    for (var i=0;i<hashtags.length;i++){
+        hashtag=hashtags[i];
+        if(hashtag[0]==newtagtext){
+            duplicate=true;
+            break;
+        }
+    }
+    if (duplicate){
         window.alert("no duplicated tags allowed")
     }else{
-        hashtags.push(newtagtext)
+        hashtags.push([newtagtext, 'user'])
     }
     show_hashtags(hashtags)
     $('#hashtag_input').val('')
@@ -46,10 +52,12 @@ function add_tag(){
 
 function remove_tag(elem){
     curtag=elem.parentNode;
-    console.log(curtag)
-    curtagtext=curtag.innerText;
-    var index = hashtags.indexOf(curtagtext);
-    if (index !== -1) hashtags.splice(index, 1);
+    curtagtext=curtag.innerText.substr(1);
+    for (var i=0;i<hashtags.length;i++){
+        if(hashtags[i][0]==curtagtext){
+            hashtags.splice(i,1);
+        }
+    }
     show_hashtags(hashtags);
 }
 

@@ -20,6 +20,8 @@ class Post(models.Model):
         ('upload', 'upload')
     ]
     source=models.CharField(max_length=20, choices=SOURCES, null=True, blank=True)
+    tagdone=models.BooleanField(default=False, blank=True, null=True)
+    contextdone=models.BooleanField(default=False, blank=True, null=True)
     def __str__(self):
         return self.session.user.username +" - "+self.source +str(self.pk)
 
@@ -32,31 +34,8 @@ class InstagramAccount(models.Model):
     def __str__(self):
         return self.user.username + " - " + self.hashed_account_id
 
-class Context(models.Model):
-    label=models.CharField(max_length=50)
-    exampletags=models.CharField(max_length=100, null=True)
-    def __str__(self):
-        return self.label
-
-class Tag(models.Model):
-    post=models.ForeignKey(Post, on_delete=models.CASCADE)
-    text=models.CharField(max_length=150)
-    MADEBY=[
-        ('user', 'user'),
-        ('post', 'post')
-    ]
-    madeby=models.CharField(max_length=20, choices=MADEBY, null=True, blank=True, default='post')
-    def __str__(self):
-        return str(self.post.pk) +" - "+ self.text +" - "+self.madeby
-
-class Mapping(models.Model):
-    tag=models.ForeignKey(Tag, on_delete=models.CASCADE)
-    context=models.ForeignKey(Context, on_delete=models.CASCADE)
-    def __str__(self):
-        return self.tag.text +" - "+ self.context.label
-
 class InstaPost(models.Model):
-    user=models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    user=models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     hashed_post_url=models.CharField(max_length=200)
     post=models.ForeignKey(Post, on_delete=models.CASCADE, blank=True)
     def __str__(self):
@@ -84,3 +63,26 @@ class UploadPost(models.Model):
     def __str__(self):
         return str(self.post) +" - " + str(self.uploadedphoto)
 
+
+class Context(models.Model):
+    label=models.CharField(max_length=50)
+    exampletags=models.CharField(max_length=100, null=True)
+    def __str__(self):
+        return self.label
+
+class Tag(models.Model):
+    post=models.ForeignKey(Post, on_delete=models.CASCADE)
+    text=models.CharField(max_length=150)
+    MADEBY=[
+        ('user', 'user'),
+        ('post', 'post')
+    ]
+    madeby=models.CharField(max_length=20, choices=MADEBY, null=True, blank=True, default='post')
+    def __str__(self):
+        return str(self.post.pk) +" - "+ self.text +" - "+self.madeby
+
+class Mapping(models.Model):
+    tag=models.ForeignKey(Tag, on_delete=models.CASCADE)
+    context=models.ForeignKey(Context, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.tag.text +" - "+ self.context.label

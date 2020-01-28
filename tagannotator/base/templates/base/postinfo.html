@@ -8,102 +8,116 @@
 
 <script>
 var posturls=[];
-    function add_post(){
-        const p=$('#posturl_input').val();
-        const posturl = p.split('?')[0];
-        verify_post(posturl);
 
-    }
-    function verify_post(posturl){
-        // check if accessible
-        var accessible = false;
-        $.ajax({
-            async: false,
-            type: "GET",
-            global: false,
-            dataType: 'html',
-            url:posturl,
-            data:{},
-            success: function(response){
-                var metas=$(response).find("meta").prevObject;
-                var userid='';
-                for (let i = 0; i < metas.length; i++) {
-                    curmeta=metas[i];
-                    var attr = $(curmeta).attr('property');
-                    if (typeof attr !== typeof undefined && attr !== false) {
-                        if(attr=='instapp:owner_user_id'){
-                            userid=$(curmeta).attr('content');
-                            break;
-                        }
+function add_post(){
+    const p=$('#posturl_input').val();
+    const posturl = p.split('?')[0];
+    append_post(posturl);
+    
+
+}
+
+function append_post(posturl){
+    // check if accessible and get user id 
+    var accessible = false;
+    $.ajax({
+        async: true,
+        type: "GET",
+        global: false,
+        dataType: 'html',
+        url:posturl,
+        data:{},
+        success: function(response){
+            var metas=$(response).find("meta").prevObject;
+            var userid='';
+            for (let i = 0; i < metas.length; i++) {
+                curmeta=metas[i];
+                var attr = $(curmeta).attr('property');
+                if (typeof attr !== typeof undefined && attr !== false) {
+                    if(attr=='instapp:owner_user_id'){
+                        userid=$(curmeta).attr('content');
+                        break;
                     }
                 }
-                check_post(posturl, userid);
+            }
+            if(userid==''){
+                window.alert("inappropriate post")
+            }else{
+                if (posturls.includes(posturl)){ // check if duplicate w/ posts uploaded in the current page
+                    window.alert("no duplicated post allowed")
+                }else{
+                    // check if this post belongs to the user + check if duplicate w/ previous posts
+                    $.ajax({
+                        url:'checkpost/',
+                        type: "POST",
+                        dataType: "json",
+                        data:{'userid':userid, 'posturl':posturl},
+                        success: function(response){
+                            result=response['checkresult'];
+                            switch(result){
+                                case 'invaliduser':
+                                    window.alert("This post is not owned by you");
+                                    break;
+                                case 'duplicated':
+                                    window.alert("This post has been used before. Please use another post.");
+                                    break;
+                                case 'validuser':
+                                    posturls.push(posturl);
+                                    render_table();
+                                    $('#posturl_input').val('')
+                                    break;
+                            }
+                        }
+                    });        
+                }
+            }   
         },
-        error: function(){
-            window.alert("URL is not valid. ")
+    error: function(){
+        window.alert("URL is not valid. ")
         }
      
     });
     }
-    function check_post(posturl, userid){
-        if (posturls.includes(posturl)){        
-            // check if duplicate w/ posts uploaded in the current page
-            window.alert("no duplicated post allowed")
-        }else{
-            // check if this post belongs to the user + check if duplicate w/ previous posts
-            $.ajax({
-                url:'checkpost/',
-                type: "POST",
-                dataType: "json",
-                data:{'userid':userid, 'posturl':posturl},
-                success: function(response){
-                    result=response['checkresult'];
-                    switch(result){
-                        case 'invaliduser':
-                            window.alert("This post is not owned by you");
-                            break;
-                        case 'duplicated':
-                            window.alert("This post has been used before. Please use another post.");
-                            break;
-                        case 'validuser':
-                            posturls.push(posturl);
-                            render_table();
-                            $('#posturl_input').val('')
-                            break;
-                    }
-                }
-            });        
-        }
-    }
 
-    function render_table(){
+function render_table(){
     table=$("#post_table tbody");
     table.empty();
-        for (var w=0; w<posturls.length; w++){
-            const posturl=posturls[w];
-            table.append(
-                "<tr class='postrow'><td>"+ String(w+1) +"</td><td>"+posturl+"<span class='btn trashbtn'><i class='fa fa-trash'></i></span></td></tr>"
-            )
-        }
-        add_deletelistener();
-
+    for (var w=0; w<posturls.length; w++){
+        posturl=posturls[w];
+        table.append(
+            "<tr class='postrow'><td>"+ String(w+1) +"</td><td>"+posturl+"<span class='btn trashbtn'><i class='fa fa-trash'></i></span></td></tr>"
+        )
     }
+    // add deletelistners 
+    trashbtns=document.getElementsByClassName('trashbtn');
+    for (var w=0; w<trashbtns.length; w++){
+        curbtn=trashbtns[w];
+        curbtn.addEventListener("click", function(){
+            sleep(100).then(()=>{
+                targeturl=this.parentNode.innerText;
+                for (var i=0;i<posturls.length;i++){
+                    if(posturls[i]==targeturl){
+                        posturls.splice(i,1);
+                    }
+                }
+                render_table();
+            })
+    })}
+}
 
-    function save_posts(){
-        // save instagram post objects + post objects 
-        for (var w=0; w<posturls.length; w++){
-            posturl=posturls[w];
-            $.ajax({
-                url:'addpost/',
-                method: 'POST',
-                data: {'posturls':posturls, 'source':'instagram'},
-                success: function(response){
-                    sessionStorage.setItem('posturls', posturls);
-                    window.location.href='../instagram/addtags/1/';   
-            }
-            });
-        }  
+function save_posts(){
+    if(posturls.length<5){
+        window.alert("5 posts needed.")
     }
+    else{
+        $.ajax({
+            url:'addposts/',
+            method: 'POST',
+            data: {'posturls':JSON.stringify(posturls), 'source':'instagram'}
+        });
+    }
+    window.location.href='../addtags/1/';   
+}
 </script>
 {% endblock %}
 

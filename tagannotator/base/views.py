@@ -34,9 +34,9 @@ def create_session(request):
     session.save()
     sessionurl='/session/'+str(session.pk)
     login(request,user)
-    print("hihi", sessionurl)
     return HttpResponse(session.pk)
 
+### views for instagram-based post addition ###
 @csrf_exempt
 def accountinfo(request, sessionpk):
     user=request.user
@@ -68,12 +68,6 @@ def accountinfo(request, sessionpk):
         # print("New user")
         return HttpResponse('')
 
-def postinfo(request, sessionpk):
-    user=request.user
-    thissession=Session.objects.get(pk=sessionpk)
-    if request.method=="GET":
-        return render(request, 'base/postinfo.html', {})
-
 @csrf_exempt
 def checkpost(request, sessionpk):
     if request.method=="POST":
@@ -88,7 +82,7 @@ def checkpost(request, sessionpk):
                 checkresult='validuser'
                 break
         if(checkresult=='validuser'):# owner ok 
-            # now check if this post has been used before 
+            # now check if this post has been used before by this user
             posts_check=InstaPost.objects.filter(user=user)
             for post_check in posts_check:
                 if(check_password(posturl, post_check.hashed_post_url)):
@@ -96,94 +90,21 @@ def checkpost(request, sessionpk):
                     break
         return HttpResponse(json.dumps({'checkresult':checkresult}),content_type="application/json")
 
-@csrf_exempt
-def createposts(request, sessionpk):
-    user=request.user 
+def addposts(request, sessionpk):
     thissession=Session.objects.get(pk=sessionpk)
-    if request.method=="POST":
-        posturls_string=request.POST.get('posturls', None)
-        posturls=json.loads(posturls)
+    posturls=json.loads(request.POST.get('posturls',None))
+    print(posturls)
+    for posturl in posturls:
+        newpost=Post(session=thissession, source='instagram')
+        newpost.save()
+        newip=InstaPost(hashed_post_url=make_password(posturl), post=newpost)
+        newip.save()
+    request.session['posturls'] = posturls
+    return HttpResponse('')
 
-    photos_list = Photo.objects.filter(session=thissession)
-    first=''
-    if(len(photos_list)<4):
-        return HttpResponse(json.dumps({'result':False}),content_type="application/json")
-    else:
-        for photo in photos_list:
-            newpost=Post(session=thissession, source='upload')
-            newpost.save()
-            newup=UploadPost(uploadedphoto=photo, post=newpost)
-            newup.save()
-        return HttpResponse(json.dumps({'result':True}),content_type="application/json")
+##################################################################
 
-
-
-@csrf_exempt
-def addpost(request, sessionpk):
-    if request.method=="POST":
-        source=request.POST.get('source',None)
-        user=request.user 
-        thissession=Session.objects.get(pk=sessionpk)
-
-        newPost=Post(session=thissession, source=source)
-        newPost.save()
-
-        if(source=='instagram'):
-            posturl=request.POST.get('posturl',None)
-            newInstaPost=InstaPost(hashed_post_url=make_password(posturl), post=newPost)
-            newInstaPost.save()
-        if(source=='upload'):
-            uploadedphotopk=request.POST.get('uploadedphotopk',None)
-            uploadedphoto=Photo.objects.get(pk=uploadedphotopk)
-            newUsedPhoto=UsedPhoto(uploadedphoto=uploadedphoto, post=newPost)
-            newUsedPhoto.save()
-        return HttpResponse(json.dumps({'postpk': newPost.pk}),content_type="application/json")
-
-@csrf_exempt
-def classification(request, sessionpk, postpk, originalpostid):
-    user=request.user
-    thissession=Session.objects.get(pk=sessionpk)
-    contexts=Context.objects.all()
-    tags=Tag.objects.filter(post__session=thissession)
-    context={
-        'contexts': contexts,
-        'session': thissession,
-        'originalpostid':originalpostid,
-        'tagscount': len(tags)
-    }
-    
-    return render(request, 'base/classification.html', context)
-
-
-@csrf_exempt
-def savetagcontext(request, sessionpk, postpk, originalpostid):
-    user=request.user
-    post=Post.objects.get(pk=postpk)
-    stringtagcontext=request.POST.get('tagcontext', None)
-    madeby=request.POST.get('madeby', None)
-
-    tagcontexts=json.loads(stringtagcontext)
-    for tagcontext in tagcontexts:
-        hashtagtext=tagcontext['hashtag']
-        newtag=Tag(post=post, text=hashtagtext, madeby=madeby)
-        newtag.save()
-        print(hashtagtext, madeby)
-        contexts=tagcontext['context']
-        for context in contexts:
-            context=Context.objects.get(label=context)
-            newMapping=Mapping(tag=newtag, context=context)
-            newMapping.save()
-    print(tagcontext)
-    return HttpResponseRedirect('')
-
-
-@csrf_exempt
-def generation(request):
-    user=request.user
-    context={}
-    return render(request, 'base/generation.html',context)
-
-
+### views for upload images 
 class BasicUploadView(View):
     def get(self, request, sessionpk):
         thissession=Session.objects.get(pk=sessionpk)
@@ -240,44 +161,92 @@ def createposts_upload(request, sessionpk):
             newup.save()
         return HttpResponse(json.dumps({'result':True}),content_type="application/json")
 
+###############################################
+
 @csrf_exempt
-def generatetags(request, sessionpk, uploadpostorder):
-    user=request.user 
+def addtags(request,sessionpk, postorder):
+    user=request.user
     thissession=Session.objects.get(pk=sessionpk)
-    thisuploadpost=UploadPost.objects.filter(uploadedphoto__session=thissession).order_by('pk')[uploadpostorder-1]
+    posturls=request.session['posturls']
+    thisurl=posturls[postorder-1]
+    originalpostid=thisurl.split('/')[-2]
+    instaposts=InstaPost.objects.filter(post__session=thissession)
+    thispost=instaposts[0].post
+    for instapost in instaposts:
+        if(check_password(thisurl, instapost.hashed_post_url)):
+            thispost=instapost.post
+            break
     if request.method=="GET":
-        return render(request, 'base/generatetags.html', {'post': thisuploadpost, 'postorder':uploadpostorder})
+        tags=Tag.objects.filter(post=thispost)
+        tagdone=thispost.tagdone
+        print(tagdone)
+        return render(request, 'base/generatetags.html', {'originalpostid': originalpostid, 'postorder':postorder, 'source':"instagram", 'oldtags':tags, 'tagdone':tagdone})
     if request.method=="POST":
-        thispost=thisuploadpost.post
         oldtags=Tag.objects.filter(post=thispost)
         for oldtag in oldtags:
             oldtag.delete()
         hashtags=json.loads(request.POST.get('hashtags',None))
         for hashtag in hashtags: 
-            newtag=Tag(post=thispost, text=hashtag, madeby='user')
+            newtag=Tag(post=thispost, text=hashtag[0], madeby=hashtag[1]) 
             newtag.save()
+        thispost.tagdone=True
+        thispost.save()
         return HttpResponse(json.dumps({'result':True}),content_type="application/json")
 
-
-
 @csrf_exempt
-def classification_upload(request, sessionpk, uploadpostorder):
+def generatetags(request, sessionpk, uploadpostorder):
     user=request.user 
     thissession=Session.objects.get(pk=sessionpk)
     thisuploadpost=UploadPost.objects.filter(uploadedphoto__session=thissession).order_by('pk')[uploadpostorder-1]
     thispost=thisuploadpost.post
     if request.method=="GET":
         tags=Tag.objects.filter(post=thispost)
+        tagdone=thispost.tagdone
+        return render(request, 'base/generatetags.html', {'post': thisuploadpost, 'postorder':uploadpostorder, 'source':"upload", 'oldtags':tags, 'tagdone':tagdone})
+    if request.method=="POST":
+        oldtags=Tag.objects.filter(post=thispost)
+        for oldtag in oldtags:
+            oldtag.delete()
+        hashtags=json.loads(request.POST.get('hashtags',None))
+        for hashtag in hashtags: 
+            newtag=Tag(post=thispost, text=hashtag[0], madeby='user')
+            newtag.save()
+        thispost.tagdone=True
+        thispost.save()
+        return HttpResponse(json.dumps({'result':True}),content_type="application/json")
+
+@csrf_exempt
+def classification(request, sessionpk, postorder):
+    user=request.user
+    thissession=Session.objects.get(pk=sessionpk)
+    posturls=request.session['posturls']
+    thisurl=posturls[postorder-1]
+    originalpostid=thisurl.split('/')[-2]
+    instaposts=InstaPost.objects.filter(post__session=thissession)
+    thispost=instaposts[0].post
+    for instapost in instaposts:
+        if(check_password(thisurl, instapost.hashed_post_url)):
+            thispost=instapost.post
+            break
+    if request.method=="GET":
+        mappings=Mapping.objects.filter(tag__post=thispost)
         contexts=Context.objects.all()
+        tags=Tag.objects.filter(post=thispost)
+        contextdone=thispost.contextdone
         context={
-            'post': thispost,
+            'post':thispost,
             'contexts': contexts,
-            'uploadpost':thisuploadpost,
+            'originalpostid':originalpostid,
             'tags': tags,
-            'postorder':uploadpostorder
+            'postorder':postorder,
+            'contextdone':contextdone,
+            'mappings':mappings
         }
         return render(request, 'base/classification.html', context)
-    if request.method=="POST":
+    if request.method=='POST':
+        oldmappings=Mapping.objects.filter(tag__post=thispost)
+        for oldmapping in oldmappings:
+            oldmapping.delete()
         mappings=json.loads(request.POST.get('mappings',None))
         for mapping in mappings:
             tagpk=mapping["hashtag"]
@@ -288,8 +257,48 @@ def classification_upload(request, sessionpk, uploadpostorder):
                 newmapping=Mapping(tag=curtag, context=curcontext)
                 newmapping.save()
                 print('Hi', tagpk, selectedcontextpk)
+        thispost.contextdone=True
+        thispost.save()
         return HttpResponse(json.dumps({'result':True}),content_type="application/json")
 
+@csrf_exempt
+def classification_upload(request, sessionpk, uploadpostorder):
+    user=request.user 
+    thissession=Session.objects.get(pk=sessionpk)
+    thisuploadpost=UploadPost.objects.filter(uploadedphoto__session=thissession).order_by('pk')[uploadpostorder-1]
+    thispost=thisuploadpost.post
+    if request.method=="GET":
+        mappings=Mapping.objects.filter(tag__post=thispost)
+        tags=Tag.objects.filter(post=thispost)
+        contextdone=thispost.contextdone
+        contexts=Context.objects.all()
+        context={
+            'post': thispost,
+            'contexts': contexts,
+            'uploadpost':thisuploadpost,
+            'tags': tags,
+            'postorder':uploadpostorder,
+            'contextdone':contextdone,
+            'mappings':mappings
+        }
+        return render(request, 'base/classification.html', context)
+    if request.method=="POST":
+        oldmappings=Mapping.objects.filter(tag__post=thispost)
+        for oldmapping in oldmappings:
+            oldmapping.delete()
+        mappings=json.loads(request.POST.get('mappings',None))
+        for mapping in mappings:
+            tagpk=mapping["hashtag"]
+            selectedcontextpks=mapping["context"]
+            curtag=Tag.objects.get(pk=tagpk)
+            for selectedcontextpk in selectedcontextpks:
+                curcontext=Context.objects.get(pk=selectedcontextpk)
+                newmapping=Mapping(tag=curtag, context=curcontext)
+                newmapping.save()
+                print('Hi', tagpk, selectedcontextpk)
+        thispost.contextdone=True
+        thispost.save()
+        return HttpResponse(json.dumps({'result':True}),content_type="application/json")
 
 @csrf_exempt
 def finish(request, sessionpk):
