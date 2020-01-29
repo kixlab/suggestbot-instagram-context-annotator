@@ -1,5 +1,5 @@
 astroid==2.3.3
-Django==2.2.7
+Django==2.1.15
 django-crispy-forms==1.7.2
 django-fontawesome==1.0
 fontawesome==5.10.1.post1
