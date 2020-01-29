@@ -113,10 +113,13 @@ function save_posts(){
         $.ajax({
             url:'addposts/',
             method: 'POST',
-            data: {'posturls':JSON.stringify(posturls), 'source':'instagram'}
+            data: {'posturls':JSON.stringify(posturls), 'source':'instagram'},
+            success: function(){
+                window.location.href='../addtags/1/'; 
+            }
         });
     }
-    window.location.href='../addtags/1/';   
+      
 }
 </script>
 {% endblock %}
