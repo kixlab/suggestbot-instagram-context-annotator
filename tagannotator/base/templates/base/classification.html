@@ -52,10 +52,14 @@ function save_labels(postorder){
     }
 }
 {% if contextdone %}
-{% for mapping in mappings %}
-console.log({{mapping.tag.text});
-{% endfor%}
-
+$(document).ready(function(){
+    sleep(50).then(()=>{
+    {% for mapping in mappings %}
+    contextbtn=document.getElementById('tag_{{mapping.tag.pk}}_{{mapping.context.pk}}');
+    contextbtn.classList.add('active');
+    {% endfor%}
+});
+});
 {% endif %}
 </script>
 {% endblock %}

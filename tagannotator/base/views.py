@@ -61,11 +61,9 @@ def accountinfo(request, sessionpk):
                     ## same insta id submitted by 2+MTurkers 
                     account=InstagramAccount(user=user, session=thissession, hashed_account_id=make_password(instaid), suspicious=True, duplicated=True)
                     account.save()
-            #    print("Duplicated")
         if not duplicate:
             account=InstagramAccount(user=user, session=thissession, hashed_account_id=make_password(instaid), suspicious=suspicious, duplicated=False)
             account.save()
-        # print("New user")
         return HttpResponse('')
 
 @csrf_exempt
@@ -93,7 +91,6 @@ def checkpost(request, sessionpk):
 def addposts(request, sessionpk):
     thissession=Session.objects.get(pk=sessionpk)
     posturls=json.loads(request.POST.get('posturls',None))
-    print(posturls)
     for posturl in posturls:
         newpost=Post(session=thissession, source='instagram')
         newpost.save()
@@ -179,7 +176,6 @@ def addtags(request,sessionpk, postorder):
     if request.method=="GET":
         tags=Tag.objects.filter(post=thispost)
         tagdone=thispost.tagdone
-        print(tagdone)
         return render(request, 'base/generatetags.html', {'originalpostid': originalpostid, 'postorder':postorder, 'source':"instagram", 'oldtags':tags, 'tagdone':tagdone})
     if request.method=="POST":
         oldtags=Tag.objects.filter(post=thispost)
@@ -256,7 +252,6 @@ def classification(request, sessionpk, postorder):
                 curcontext=Context.objects.get(pk=selectedcontextpk)
                 newmapping=Mapping(tag=curtag, context=curcontext)
                 newmapping.save()
-                print('Hi', tagpk, selectedcontextpk)
         thispost.contextdone=True
         thispost.save()
         return HttpResponse(json.dumps({'result':True}),content_type="application/json")
@@ -295,7 +290,6 @@ def classification_upload(request, sessionpk, uploadpostorder):
                 curcontext=Context.objects.get(pk=selectedcontextpk)
                 newmapping=Mapping(tag=curtag, context=curcontext)
                 newmapping.save()
-                print('Hi', tagpk, selectedcontextpk)
         thispost.contextdone=True
         thispost.save()
         return HttpResponse(json.dumps({'result':True}),content_type="application/json")
