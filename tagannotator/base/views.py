@@ -89,6 +89,7 @@ def checkpost(request, sessionpk):
         return HttpResponse(json.dumps({'checkresult':checkresult}),content_type="application/json")
 
 def addposts(request, sessionpk):
+    print("Hi")
     thissession=Session.objects.get(pk=sessionpk)
     posturls=json.loads(request.POST.get('posturls',None))
     for posturl in posturls:
