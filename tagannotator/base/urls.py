@@ -18,6 +18,8 @@ urlpatterns = [
     path('<int:sessionpk>/instagram/addtags/<int:postorder>/',views.addtags, name='addtags'),   
     path('<int:sessionpk>/instagram/classification/instruction/',TemplateView.as_view(template_name='base/classification_instruction.html'), name='classification_instruction'),    
     path('<int:sessionpk>/instagram/classification/<int:postorder>/',views.classification, name='classification'),
+    path('<int:sessionpk>/instagram/classification/finish/',views.finish, name='finish'),    
+
     # image upload
     path('<int:sessionpk>/upload/',views.BasicUploadView.as_view(), name='upload'),    
     path('<int:sessionpk>/upload/delete/',views.deletephoto, name='deletephoto'),       
