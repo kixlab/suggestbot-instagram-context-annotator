@@ -45,6 +45,7 @@ def accountinfo(request, sessionpk):
         return render(request, 'base/accountinfo.html', {})
     if request.method=="POST":
         instaid=request.POST.get('instaid',None)
+        print(instaid)
         stringsuspicious=request.POST.get('suspicious',None)
         if(stringsuspicious=='false'):
             suspicious=False
@@ -75,6 +76,8 @@ def checkpost(request, sessionpk):
         # check if the username match existing instagram account
         account_check=InstagramAccount.objects.filter(user=user)
         checkresult='invaliduser'
+        print('Hi', type(userid))
+        print(posturl)
         for registered_account in account_check:
             if (check_password(userid,registered_account.hashed_account_id)):
                 checkresult='validuser'

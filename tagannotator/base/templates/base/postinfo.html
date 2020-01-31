@@ -36,6 +36,7 @@ function append_post(posturl){
                 if (typeof attr !== typeof undefined && attr !== false) {
                     if(attr=='instapp:owner_user_id'){
                         userid=$(curmeta).attr('content');
+                        console.log(userid)
                         break;
                     }
                 }
