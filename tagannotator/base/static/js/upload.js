@@ -1,5 +1,6 @@
 $(document).ready(function(){
     render_table()
+    get_yellkey($('#uri').text())
 })
 $(function () {
 
@@ -55,6 +56,19 @@ function render_table(){
         });
 
     
+}
+
+function get_yellkey(url) {
+    $.ajax({
+        type: 'GET',
+        url: `http://www.yellkey.com/api/new?url=${url}&time=5`,
+        success: function (res) {
+            console.log(res)
+            if (res.key) {
+                $('#uri').text(`http://yellkey.com/${res.key}`)
+            }
+        }
+    })
 }
 
 function add_deletelistener(){
