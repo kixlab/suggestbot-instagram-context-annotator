@@ -43,10 +43,44 @@ var hashtags=[];
 {% endblock %}
 
 {% block content %}
-{% include 'base/progressbar.html' %}
 <div class='row' style='max-height:50vh;'>
     <div class="col-1" ></div>
     <div class="col-10" >
+        <table>
+            <tr>
+                <td colspan=1></td>
+                <td colspan=3>Hashtag Generation</td>
+                <td colspan=4></td>
+                <td colspan=3>Context Label Generation</td>
+                <td colspan=1></td>
+            </tr>
+            <tr>
+                {% for i in '12345'|make_list %}
+                    {% if forloop.counter < postorder %}
+                    <td class='tag done'>
+                    {% elif forloop.counter == postorder %}
+                    <td class='tag current'>
+                    {% else %}
+                    <td class='tag notyet'>
+                    {% endif %}
+                    {% if source == "upload" %}
+                    Image
+                    {% else %}
+                    Post
+                    {% endif %} {{ forloop.counter }}</td>    
+                {% endfor %}
+                <td colspan=2></td>
+                {% for i in '12345'|make_list %}
+                <td class='tag notyet'>
+                    {% if source == "upload" %}
+                    Image
+                    {% else %}
+                    Post
+                    {% endif %} {{ forloop.counter }}</td>
+                {% endfor %}
+            </tr>
+        </table>
+
         <h3 style='margin-top:50px; margin-bottom:30px;'>Make 5+ hashtags as if you are uploading this image to your Instagram. </h3>
             <div class='row'>
             <div class='col-md-4' id="post-holder" class="holder iframe-container">

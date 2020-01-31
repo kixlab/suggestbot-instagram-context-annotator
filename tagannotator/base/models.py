@@ -6,7 +6,7 @@ from django.utils.timezone import now
 
 class Session(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE)
-    starttime=models.DateTimeField(auto_now_add=True, blank=True)
+    starttime=models.DateTimeField(default=None, blank=True)
     endtime=models.DateTimeField(default=None, blank=True)
     status=models.BooleanField(default=False, blank=True)
     token=models.CharField(max_length=50, default=None, null=True, blank=True)

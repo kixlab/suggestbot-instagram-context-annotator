@@ -18,6 +18,7 @@ import random
 import string
 import json
 from django.utils.encoding import smart_str
+from random_word import RandomWords
 
 @csrf_exempt
 def create_session(request):
@@ -29,7 +30,8 @@ def create_session(request):
         user=user_check[0]
     # create new session 
     starttime=timezone.now()
-    token='temp token'
+    rw=RandomWords()
+    token=rw.get_random_words(hasDictionaryDef="true", minCorpusCount=20, minLength=4,minDictionaryCount=1, maxLength=4, sortBy="alpha", limit=4)
     session=Session(user=user, starttime=starttime,endtime=starttime, status=False, token=token)
     session.save()
     sessionurl='/session/'+str(session.pk)
@@ -302,7 +304,10 @@ def classification_upload(request, sessionpk, uploadpostorder):
 def finish(request, sessionpk):
     user=request.user 
     thissession=Session.objects.get(pk=sessionpk)
-    token=thissession.token
-    thissession.status=True 
-    return render(request, 'base/finish.html',{'token':token})
+    tokens=thissession.token
+    tokentext=tokens.replace("'","")[1:-1]
+    thissession.status=True
+    thissession.endtime=timezone.now()
+    thissession.save()
+    return render(request, 'base/finish.html',{'token':tokentext})
     
