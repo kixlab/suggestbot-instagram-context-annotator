@@ -1,6 +1,10 @@
 $(document).ready(function(){
     render_table()
     get_yellkey($('#uri').text())
+    if(isMobileDevice()){
+        document.getElementById('nextbtn-holder').style.display='none';
+    }
+
 })
 $(function () {
 
@@ -114,3 +118,7 @@ function finish_upload(){
         }
     });
 }
+
+function isMobileDevice() {
+    return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+};
