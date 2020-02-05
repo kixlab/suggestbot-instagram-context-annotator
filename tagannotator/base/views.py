@@ -47,7 +47,6 @@ def accountinfo(request, sessionpk):
         return render(request, 'base/accountinfo.html', {})
     if request.method=="POST":
         instaid=request.POST.get('instaid',None)
-        print(instaid)
         stringsuspicious=request.POST.get('suspicious',None)
         if(stringsuspicious=='false'):
             suspicious=False
@@ -78,8 +77,6 @@ def checkpost(request, sessionpk):
         # check if the username match existing instagram account
         account_check=InstagramAccount.objects.filter(user=user)
         checkresult='invaliduser'
-        print('Hi', type(userid))
-        print(posturl)
         for registered_account in account_check:
             if (check_password(userid,registered_account.hashed_account_id)):
                 checkresult='validuser'
@@ -94,7 +91,6 @@ def checkpost(request, sessionpk):
         return HttpResponse(json.dumps({'checkresult':checkresult}),content_type="application/json")
 
 def addposts(request, sessionpk):
-    print("Hi")
     thissession=Session.objects.get(pk=sessionpk)
     posturls=json.loads(request.POST.get('posturls',None))
     for posturl in posturls:
@@ -294,7 +290,6 @@ def classification_upload(request, sessionpk, uploadpostorder):
         actionlogs=json.loads(request.POST.get('actionlogs',None))
         newlog=ClassificationLog(logs=actionlogs, post=thispost)
         newlog.save()
-        print(newlog.logs)
         for mapping in mappings:
             tagpk=mapping["hashtag"]
             selectedcontextpks=mapping["context"]
