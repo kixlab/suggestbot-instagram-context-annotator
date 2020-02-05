@@ -74,7 +74,7 @@ function save_hashtags(postorder){
             success: function(response){
                 if(response["result"]){
                     if(postorder>4){
-                        window.location.href='../../classification/instruction/'
+                        window.location.href='../../classification/1/'
                     }
                     else{
                         window.location.href='../'+String(postorder+1)+'/';
