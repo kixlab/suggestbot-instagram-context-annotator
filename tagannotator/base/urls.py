@@ -7,6 +7,7 @@ from . import views
 
 urlpatterns = [
     path('start', TemplateView.as_view(template_name='base/start.html')),
+    path('consent', TemplateView.as_view(template_name='base/consent.html')),
     path('signin', TemplateView.as_view(template_name='base/signin.html')),
     path('createsession', views.create_session, name='create_session'),
     path('<int:sessionpk>/selectsource',TemplateView.as_view(template_name='base/selectsource.html')),    

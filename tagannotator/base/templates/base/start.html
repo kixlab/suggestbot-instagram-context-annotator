@@ -4,21 +4,6 @@
 {% fontawesome_stylesheet %}
 
 {% block scripts %}
-<script>
-    function create_session(){
-        username=$('#workerID').val();
-        $.ajax({
-            url:'createsession',
-            method: 'POST',
-            data: {'username':username},
-            success: function(data) {
-                start_session(data)
-        }});
-    }
-    function start_session(data){
-        window.location.href='/base/'+String(data)+'/selectsource';
-    }
-</script>
 {% endblock %}
 
 {% block content %}
@@ -31,7 +16,7 @@
     <br><br>
     <h5>Procedure</h5>
     <ol>
-        <li>Select/add images. You can user your Instagram posts or photos that you took.        </li>
+        <li>Select/add images. You can use your Instagram posts or photos that you took.        </li>
         <li>For each image, add 5 hashtags. </li>
         <li>For each image, select context labels for each hashtag you generated.</li>
     </ol>
@@ -41,7 +26,7 @@
     <p> It will take 15-20 minutes to finish. </p> 
     <div>     
         <div style='float:right;'>    
-            <button type='button' class='btn btn-primary btn-md' style="margin-top:3px;" onclick='window.location.href="./signin"'>Start</button>
+            <button type='button' class='btn btn-primary btn-md' style="margin-top:3px;" onclick='window.location.href="./consent"'>Next</button>
         </div> 
     </div> 
 </div>

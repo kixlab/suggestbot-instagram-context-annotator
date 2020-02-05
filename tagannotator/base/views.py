@@ -31,7 +31,7 @@ def create_session(request):
     # create new session 
     starttime=timezone.now()
     rw=RandomWords()
-    token=rw.get_random_words(hasDictionaryDef="true", minCorpusCount=20, minLength=4,minDictionaryCount=1, maxLength=4, sortBy="alpha", limit=4)
+    token=rw.get_random_words(hasDictionaryDef="true", minCorpusCount=20, minLength=5, minDictionaryCount=1, maxLength=5, sortBy="alpha", limit=4)
     session=Session(user=user, starttime=starttime,endtime=starttime, status=False, token=token)
     session.save()
     sessionurl='/session/'+str(session.pk)

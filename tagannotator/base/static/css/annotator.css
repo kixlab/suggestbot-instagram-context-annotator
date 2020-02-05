@@ -153,8 +153,8 @@
 }
 
 .textbutton{
-  color:blue;
-  text-decoration: underline; 
+  color:blue !important;
+  text-decoration: underline !important; 
   padding:0px;
   margin:0px;
   background-color: transparent;

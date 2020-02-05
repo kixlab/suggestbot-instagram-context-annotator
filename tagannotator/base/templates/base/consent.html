@@ -1,0 +1,33 @@
+{% extends "annotate_base.html" %}
+{% load fontawesome %}
+{% load staticfiles %}
+{% fontawesome_stylesheet %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block content %}
+<div>
+    <h5>How your data (hashtags and context labels) is processed and used. </h5>
+    <ul>
+        <li> <b>Hashtags and context labels</b> will be saved and opened to the <text class='emph'>public as part of a open dataset</text>. The open dataset will have the following format. 
+            <div style='text-align:center;'>
+                <img style='width:400px;' src="{% static "media/instruction/consent_dataset.png" %}">
+            </div> 
+        </li> 
+        <li>
+            <b>Instagram account and post urls</b> will be encrypted and save securely. This information is used only to guide your work, such as preventing the use of 3rd person's Instagram post or use one post multiple times. This information will not be in part of the open dataset.
+        </li>
+        <li>
+            <b>Images uploaded or Instagram post images</b> will not be saved in the system. The images will be saved in a temporary memory and will be removed when you finish the task. 
+        </li>
+    </ul>
+    
+    <h5>By clicking this button, you agree with the data processing and usage plan described above. </h5>
+    <div>     
+        <div style='float:right;'>    
+            <button type='button' class='btn btn-primary btn-md' style="margin-top:3px;" onclick='window.location.href="./signin"'>Agree and Start</button>
+        </div> 
+    </div> 
+</div>
+{% endblock %}
