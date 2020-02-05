@@ -101,7 +101,7 @@ If you want to upload images in your <b>mobile phone or alternative device</b>,
   </div>
 </div>
 {# 2. FILE INPUT TO BE USED BY THE PLUG-IN #}
-<input id="fileupload" type="file" name="file" multiple
+<input id="fileupload" type="file" name="file" multiple accept="image/*"
         style="display: none;"
         data-url='../upload/'
         data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
