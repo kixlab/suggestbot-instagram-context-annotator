@@ -3,6 +3,7 @@ $(document).ready(function(){
     get_yellkey($('#uri').text())
     if(isMobileDevice()){
         document.getElementById('nextbtn-holder').style.display='none';
+        document.getElementById('mobile-warning').style.display='block';
     }
 
 })
