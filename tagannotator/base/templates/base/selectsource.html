@@ -4,35 +4,49 @@
 {% fontawesome_stylesheet %}
 
 {% block scripts %}
-<link href="{% static "css/annotator.css" %}" rel="stylesheet"> 
 {% endblock %}
 
 {% block content %}
-<div class='row'>
-    <div class="col-1" ></div>
-    <div class="col-10" >
-        <h3 style='margin-top:50px; margin-bottom:10px;'>Select image source that you want to use. </h3>
+        <h3 class='main_prompt'>Select image source that you want to use. </h3>
         <div class='row'>
-            <div class='col-6'>
-                <div class="card" style="width: 18rem;">
+            <div class='col-5'>
+                <div class="card" style="width: 100%">
                     <div class="card-body">
-                      <h5 class="card-title">Use Instagram Posts</h5>
-                      <p class="card-text">Blah Blah.</p>
-                      <a href="./instagram/accountinfo/" class="btn btn-primary">Use Instagram posts.</a>
+                      <h5 class="card-title" style='text-align: center;'>Your Instagram Posts</h5>
+                      <p class="card-text">
+                        Use <text class='emph'>5 of your Instagram posts</text>. Note that your Instagram account should be in a <text class='emph'>public account</text>.  
+                      </p>
+                      <p class="card-text">
+                        By using your Instagram posts, <text style='text-decoration:underline'>you don't need to upload your image and you can use hashtags that you already generated</text>. 
+                      </p>
+                      <p class="card-text">
+                        Your Instagram account and post information will be encrypted and saved to protect your privacy.</text>   
+                      </p>
+                      <div style='text-align: center;'>
+                      <a href="./instagram/accountinfo/" class="btn btn-primary">Use Instagram posts</a>
+                      </div>
                     </div>
                   </div>
             </div>
-            <div class='col-6'>
-                <div class="card" style="width: 18rem;">
+            <div class='col-2' style='vertical-align: middle; line-height: 100%; text-align: center; padding-top: 100px;'>
+              or
+            </div>
+            <div class='col-5'>
+                <div class="card" style="width: 100%; height:100%">
                     <div class="card-body">
-                      <h5 class="card-title">Use photos that you took.</h5>
-                      <p class="card-text">Blah Blah.</p>
-                      <a href="./upload/" class="btn btn-primary">Use photos that I took.</a>
+                      <h5 class="card-title" style='text-align: center;'>Photos That You Took</h5>
+                      <p class="card-text">You can upload 5 photos that you took.</p>
+                      <p class="card-text" style='margin-bottom: 0px;'>Please choose this option</p>
+                        <ul>
+                          <li> if you don't have a public Instagram account </li>
+                            <li>or you don't want to use your own Instagram account and posts.</li>
+                        </ul> 
+                      <p class="card-text">Note that you should use photost that <text class='emph'>you took, not downloaded from somewhere</text>.</p>
+                      <div style='text-align: center;'>
+                      <a href="./upload/" class="btn btn-primary">Use photos that I took</a>
+                      </div>
                     </div>
                   </div>
-            </div>        </div>
-    </div>
-    <div class="col-1"></div>
-  
-</div>
+            </div>        
+        </div>
 {% endblock %}

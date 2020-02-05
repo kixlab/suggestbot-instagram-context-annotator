@@ -4,21 +4,14 @@
 {% fontawesome_stylesheet %}
 
 {% block scripts %}
-<link href="{% static "css/annotator.css" %}" rel="stylesheet"> 
-
 {% endblock %}
 
 {% block content %}
-<div class='row'>
-    <div class="col-1" ></div>
-        <div class="col-10" >
-            <div>
-                <h3 style='margin-top:100px; margin-bottom:50px;'>Token to submit</h3>
-                <p>{{token}}</p>
-                
-            </div>
-        </div>
-    <div class="col-1"></div>
-  
+<div>
+    <h3 class='main_prompt'>Please copy the following token and submit it in the MTurk.</h3>
+    <p style='text-align:center;font-size:xx-large;color:darkorange'>{{token}}</p>
+
+    <h5 style='margin-top:50px;'>Thank you for your participation!</h3>
+    
 </div>
 {% endblock %}

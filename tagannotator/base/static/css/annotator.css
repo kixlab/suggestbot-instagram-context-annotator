@@ -228,3 +228,56 @@ input:checked + .slider:before {
   color:blue;
   font-size:18px;
 }
+
+.prog_cell{
+  width:40px;
+  height: 30px;
+  text-align: center;
+}
+
+.prog_table{
+  width:100%;
+  outline-style: solid;
+  outline-width: 1px;
+  outline-color: lightgray;
+}
+
+.prog_next{
+  height: 60px;
+  line-height: 60px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.prog_cell.done{
+  background-color: #0ea8544E;
+}
+.prog_cell.current{
+  background-color: #0ea854;
+}
+
+.gifs{
+  width: 500px;
+  border:1px solid lightgray;
+}
+/* Instruction formatting */
+.instruction{
+  padding-top:10px;
+  padding-bottom: 10px;
+}
+
+/* text, prompt formatting  */
+.main_prompt{
+  margin-top:30px; 
+  margin-bottom:30px;
+}
+
+.emph{ 
+  color:green;
+}
+
+.notes{
+  font-size:small;
+  margin-bottom: 0;
+  color: rgb(255, 116, 101);
+}

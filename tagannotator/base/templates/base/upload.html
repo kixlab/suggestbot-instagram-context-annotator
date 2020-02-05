@@ -13,48 +13,107 @@
 {% endblock %}
 
 {% block content %}
-{% include 'base/progressbar.html' %}
-<div class='row'>
-  <div class='col-1'></div>
-  <div class='col-10'>
-    <div class="well text-muted text-center" style="padding-top: 4rem; padding-bottom: 4rem;">
-      <span class="glyphicon glyphicon-arrow-down" style="font-size: 4rem;"></span>
-      <h3>Drop Photos Here to Upload</h3>
-    </div>
+<p>
+  <button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#progressbar" aria-expanded="false" aria-controls="progressbar">
+    Click to see your progress.
+  </button>
+</p>
+<div class='collapse' id='progressbar'>
+    <div class='card card-body'>
+      <div class='row'>
+        <div class='col-md-2'>
+            <table class='prog_table'>
+                {% if source == 'upload' %}
+                <tr>
+                    <td class='prog_cell current'>Image </td>
+                </tr>
+                <tr>
+                    <td class='prog_cell current'>Upload</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td class='prog_cell current'>Post </td>
+                </tr>
+                <tr>
+                    <td class='prog_cell current'>Selection</td>
+                </tr>
 
-    <div class="well text-muted text-center" style="padding-top: 4rem; padding-bottom: 4rem;">
-      You can use your mobile phone to upload pictures. <br>
-      Please go to <span id="uri" style="font-weight: bold; text-decoration: underline;">{{request.build_absolute_uri}}</span> in your mobile phone to upload the photos. <br>
-      When you're done uploading the photos, please refresh this page and continue.
-    </div>
-
-    <button type="button" class="btn btn-primary js-upload-photos">
-        <span class="glyphicon glyphicon-cloud-upload"></span> Upload photos
-      </button>
-      
-      {# 2. FILE INPUT TO BE USED BY THE PLUG-IN #}
-      <input id="fileupload" type="file" name="file" multiple
-             style="display: none;"
-             data-url='../upload/'
-             data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
-      
-      {# 3. TABLE TO DISPLAY THE UPLOADED PHOTOS #}
-      <table id="gallery" class="table table-bordered">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Photo</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>    
-      <div class="row">
-        <div class='col-sm-11'></div>
-        <div class='col-sm-1'>
-            <input type="submit" class="btn btn-info" value="Next" onclick='finish_upload()' />
+                {% endif %}
+            </table>
         </div>
+        <div class='col-md-1 prog_next'><hr style='margin-top:30px;'></div>
+        <div class='col-md-4'>
+            <table class='prog_table'>
+                <tr>
+                    <td class='prog_cell' colspan="5">Hashtag Generation</td>
+                </tr>
+                <tr>
+                    {% for i in "12345"|make_list %}
+                        <td class='prog_cell notyet'># {{i}}</td>
+                    {% endfor %}
+                </tr>
+            </table>
+        </div>
+        <div class='col-md-1 prog_next'><hr style='margin-top:30px;'></div>
+        <div class='col-md-4'>
+            <table class='prog_table'>
+                <tr>
+                    <td class='prog_cell' colspan="5">Context Labeling</td>
+                </tr>
+                <tr>
+                    {% for i in "12345"|make_list %}
+                    <td class='prog_cell context_notyet'># {{i}}</td>
+                    {% endfor %}
+                </tr>
+            </table>
+        </div>
+      </div>
+  </div>
 </div>
+  
+<h3 class='main_prompt'>Upload 5 images that you want to use.</h3>
+<div class='instruction'>
+  <p>Click <a type='button' data-toggle="modal" data-target="#instruction_modal" style='color: blue; text-decoration: underline;'>here</a> to see how-to. </p>  
+</div>
+<div class="well text-muted text-center" style="padding-top: 2rem; padding-bottom: 2rem; border: 1px solid lightgray">
+  <span class="glyphicon glyphicon-arrow-down" style="font-size: 4rem;"></span>
+  <h3>Drop Photos Here to Upload</h3>
+</div>
+<div style='text-align: center; padding:5px;'>or</div>
+<div style='text-align: center; padding: 5px;'> 
+  <button type="button" class="btn btn-primary js-upload-photos">
+    <span class="glyphicon glyphicon-cloud-upload"></span> Click to upload photos
+  </button>
+</div>
+<div style='padding-top: 10px; padding-bottom:10px;color:rgb(66, 66, 66); '>
+If you want to upload images in your <b>mobile phone or alternative device</b>, please go to 
+<span id="uri" style="font-weight: bold; text-decoration: underline;color:darkorange;">{{request.build_absolute_uri}}</span> 
+in your mobile phone or device to upload the photos. When you're done uploading the photos, <b>please refresh </b>this page and continue.
+</div>
+
+{# 2. FILE INPUT TO BE USED BY THE PLUG-IN #}
+<input id="fileupload" type="file" name="file" multiple
+        style="display: none;"
+        data-url='../upload/'
+        data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
+
+{# 3. TABLE TO DISPLAY THE UPLOADED PHOTOS #}
+<table id="gallery" class="table table-bordered">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Photo</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>   
+
+<div class="row">
+  <div class='col-sm-11'></div>
+  <div class='col-sm-1'>
+      <input type="submit" class="btn btn-info" value="Next" onclick='finish_upload()' />
+  </div>
 </div>
 
 <div class="modal fade" id="modal-progress" data-backdrop="static" data-keyboard="false">
@@ -70,9 +129,30 @@
         </div>
       </div>
     </div>
-  </div>
-<div class='col-1'></div>
 </div>
+{% endblock %}
 
+{% block instruction_modal_title %}
+How to upload images
+{% endblock %}
 
+{% block instruction_modal_body %}
+<h6>If you want to use current device </h6>
+<ol>
+  <li> Drag and drop the image files or use the upload button. 
+  </li>
+</ol>
+<div style='text-align:center;'>
+  <img class='gifs' src="{% static "media/instruction/upload_image.gif" %}">
+</div>  
+<br>
+<h6>If you want to upload images from your mobile phone or alternative devices</h6>
+<ol>
+  <li> With your mobile phone or alternative device, get in to <text style='color:darkorange;'>url (orange colored)</text>. </li>
+  <li> Upload images. </li>
+  <li> Refresh current page, the you can see photos you uploaded. </li>
+</ol>
+<div style='text-align:center;'>
+  <img class='gifs' src="{% static "media/instruction/overview_procedure.gif" %}">
+</div> 
 {% endblock %}

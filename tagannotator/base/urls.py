@@ -6,6 +6,7 @@ from django.views.generic import TemplateView
 from . import views
 
 urlpatterns = [
+    path('start', TemplateView.as_view(template_name='base/start.html')),
     path('signin', TemplateView.as_view(template_name='base/signin.html')),
     path('createsession', views.create_session, name='create_session'),
     path('<int:sessionpk>/selectsource',TemplateView.as_view(template_name='base/selectsource.html')),    

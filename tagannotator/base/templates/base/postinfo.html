@@ -13,8 +13,6 @@ function add_post(){
     const p=$('#posturl_input').val();
     const posturl = p.split('?')[0];
     append_post(posturl);
-    
-
 }
 
 function append_post(posturl){
@@ -79,7 +77,6 @@ function append_post(posturl){
      
     });
     }
-
 function render_table(){
     table=$("#post_table tbody");
     table.empty();
@@ -126,53 +123,132 @@ function save_posts(){
 {% endblock %}
 
 {% block content %}
-<!-- 여기도 tag generation 처럼 맨 위에 'add' 버튼 두고, 밑에 table로 올라온거 보여주고, 삭제할 수 잇도록 -->
-<!-- 그리고 Next 할 때 갯수 세서, 5개 이상일때만 통과시키기  -->
-<div class='row'>
-    <div class="col-1" ></div>
-        <div class="col-10" >
-            <div>
-                <h3 style='margin-top:100px; margin-bottom:50px;'>Copy and paste url of post that you want to use.</h3>
-                <p>This step verifies whether the post you submitted is 1) accessible and 2) not used before. </p>
-                <div class='row'>
-                    <div class='col-md-3'>
-                    </div>
-                    <div class='col-md-6'>
-                        <div class="holder">
-                            <div>
-                            <div class="input-group">
-                                <div class='input-group-prepend'><span class="input-group-text">Post URL</span>
-                                </div>   
-                                 <input type="text" class="form-control" placeholder="Copy and paste url of post that you want to use." id='posturl_input' aria-describedby="basic-addon2">
-                                    <div class="input-group-append">
-                                      <button class="btn btn-outline-info" type="button"  onclick='add_post()'>Add</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>   
-                    <div class='col-md-3'></div>
-                </div>
-                <table id="post_table" class="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Post URL</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>  
+<div style='text-align: center; padding-bottom:5px;'>
+    <button class="btn btn-success btn-sm" type="button" data-toggle="collapse" data-target="#progressbar" aria-expanded="false" aria-controls="progressbar">
+      Click to see your progress.
+    </button>
+</div> 
+  <div class='collapse' id='progressbar'>
+      <div class='card card-body'>
+        <div class='row'>
+            <div class='col-md-2'>
+                <table class='prog_table'>
+                    {% if source == 'upload' %}
+                    <tr>
+                        <td class='prog_cell current'>Image </td>
+                    </tr>
+                    <tr>
+                        <td class='prog_cell current'>Upload</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td class='prog_cell current'>Post </td>
+                    </tr>
+                    <tr>
+                        <td class='prog_cell current'>Selection</td>
+                    </tr>
+        
+                    {% endif %}
+                </table>
             </div>
-            <div class="row">
-                <div class='col-sm-11'></div>
-                <div class='col-sm-1'>
-                    <input type="submit" class="btn btn-info" value="Next" onclick='save_posts()' />
-                </div>
+            <div class='col-md-1 prog_next'>>></div>
+            <div class='col-md-4'>
+                <table class='prog_table'>
+                    <tr>
+                        <td class='prog_cell' colspan="5">Hashtag Generation</td>
+                    </tr>
+                    <tr>
+                        {% for i in "12345"|make_list %}
+                            <td class='prog_cell notyet'># {{i}}</td>
+                        {% endfor %}
+                    </tr>
+                </table>
             </div>
-
+            <div class='col-md-1 prog_next'>>></div>
+            <div class='col-md-4'>
+                <table class='prog_table'>
+                    <tr>
+                        <td class='prog_cell' colspan="5">Context Labeling</td>
+                    </tr>
+                    <tr>
+                        {% for i in "12345"|make_list %}
+                        <td class='prog_cell context_notyet'># {{i}}</td>
+                        {% endfor %}
+                    </tr>
+                </table>
+            </div>
         </div>
-    <div class="col-1"></div>
-  
+    </div>
+  </div>
+
+
+
+
+<div>
+    <h3 class='main_prompt'>Copy and paste URLs of 5 posts that you want to use. </h3>
+    <div class='instruction'>
+        <ol>
+            <li>Choose <b>5 of your Instagram posts</b> that you want to use. </li>
+            <li>For each post, copy and paste the URL of the post. </li>
+            <li>Click Next button after adding 5 different posts. </li>
+        </ol>
+        <p>Click <a type='button' data-toggle="modal" data-target="#instruction_modal" style='color:blue;text-decoration: underline;'>here</a> to see how-to. </p>  
+        <p class='notes'>* Note that you should use posts that belong to the Instagram account that you submitted in the previous page.</p>
+        <p class='notes'>** Note that your instagram post url will be <b>encrypted</b> and saved securely. We do not save Images of the posts. </p>    
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>
+        </div>
+        <div class='col-md-6'>
+            <div class="holder">
+                <div>
+                <div class="input-group">
+                    <div class='input-group-prepend'><span class="input-group-text">Post URL</span>
+                    </div>   
+                        <input type="text" class="form-control" placeholder="Copy and paste url of post that you want to use." id='posturl_input' aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-info" type="button"  onclick='add_post()'>Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>   
+        <div class='col-md-3'></div>
+    </div>
+    <table id="post_table" class="table table-bordered">
+        <thead>
+            <tr>
+            <th>#</th>
+            <th>Post URL</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>  
 </div>
+<div class="row">
+    <div class='col-sm-11'></div>
+    <div class='col-sm-1'>
+        <input type="submit" class="btn btn-primary" value="Next" onclick='save_posts()' />
+    </div>
+</div>
+{% endblock %}
+{% block instruction_modal_title %}
+How to add Instagram post URLs
+{% endblock %}
+{% block instruction_modal_body %}
+<ol>
+    <li>Choose <b>5 of your Instagram posts</b> that you want to use. </li>
+    <li>For each post, copy and paste the URL of the post. 
+    <div style='text-align:center;'>
+        <img class='gifs' src="{% static "media/instruction/add_post.gif" %}">
+        </div>
+    </li>
+    <li>Click Next button after adding 5 different posts
+    <div style='text-align:center;'>
+        <img class='gifs' src="{% static "media/instruction/next_post.gif" %}">
+    </div>
+    </li>
+
+</ol>
 {% endblock %}

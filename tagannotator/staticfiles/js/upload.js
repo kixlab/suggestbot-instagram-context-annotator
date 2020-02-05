@@ -1,3 +1,7 @@
+$(document).ready(function(){
+    render_table()
+    get_yellkey($('#uri').text())
+})
 $(function () {
 
 $(".js-upload-photos").click(function () {
@@ -23,12 +27,90 @@ $("#fileupload").fileupload({
     },
     done: function (e, data) {
     if (data.result.is_valid) {
-        $("#gallery tbody").prepend(
-        "<tr><td><a href='" + data.result.url + "'>" + data.result.name + "</a></td></tr>"
-        )
+        render_table();
     }
     }
 
 });
-
 });
+
+function render_table(){
+    table=$("#gallery tbody");
+    table.empty();
+    $.ajax({
+        type: "GET",
+        url:'../upload/getphotos/',
+        dataType: 'json',
+        success: function(photosdata){
+            photos_list=JSON.parse(photosdata);
+            table=$("#gallery tbody");
+            table.empty();
+            for (var w=0; w<photos_list.length; w++){
+                photo=photos_list[w];
+                table.append(
+                "<tr class='imgrow' id=photo_"+String(photo["pk"])+"><td>"+ String(w+1) +"</td><td><img class='img_preview' src='"+photo["url"] +"'>" + photo["filename"] + "</a><span class='btn trashbtn'><i class='fa fa-trash'></i></span></td></tr>"
+                )
+            }
+            add_deletelistener()
+            }
+        });
+
+    
+}
+
+function get_yellkey(url) {
+    $.ajax({
+        type: 'GET',
+        url: `http://www.yellkey.com/api/new?url=${url}&time=5`,
+        success: function (res) {
+            console.log(res)
+            if (res.key) {
+                $('#uri').text(`http://yellkey.com/${res.key}`)
+            }
+        }
+    })
+}
+
+function add_deletelistener(){
+    trashbtns=document.getElementsByClassName('trashbtn');
+    for (var w=0; w<trashbtns.length; w++){
+        curbtn=trashbtns[w];
+        curbtn.addEventListener("click", function(){
+            sleep(100).then(()=>{
+                delete_row(this)
+            })
+    })}
+}
+
+function delete_row(elem){
+    photopk=elem.parentNode.parentNode.id.split('_')[1];
+    $.ajax({
+        url:'../upload/delete/',
+        method: 'POST',
+        dataType:'json',
+        data: {'photopk':photopk}
+        
+    });
+    sleep(300).then(()=>{
+    render_table();});
+
+}
+
+
+function finish_upload(){
+    // make post object for each image 
+    $.ajax({
+        url:'../upload/createposts/',
+        method: 'GET',
+        dataType:'json',
+        success: function(response){
+            result=response['result'];
+            if(result){
+                window.location.href='../upload/generatetags/1/';
+            }
+            else{
+                console.log('Not enough images uploaded.')
+            }
+        }
+    });
+}

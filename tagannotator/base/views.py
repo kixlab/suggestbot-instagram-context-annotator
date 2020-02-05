@@ -112,7 +112,7 @@ class BasicUploadView(View):
     def get(self, request, sessionpk):
         thissession=Session.objects.get(pk=sessionpk)
         photos_list = Photo.objects.filter(session=thissession)
-        return render(self.request, 'base/upload.html', {'photos': photos_list})
+        return render(self.request, 'base/upload.html', {'photos': photos_list, 'source':'upload'})
 
     def post(self, request, sessionpk):
         thissession=Session.objects.get(pk=sessionpk)
@@ -305,7 +305,7 @@ def finish(request, sessionpk):
     user=request.user 
     thissession=Session.objects.get(pk=sessionpk)
     tokens=thissession.token
-    tokentext=tokens.replace("'","")[1:-1]
+    tokentext=tokens.replace("'","")[1:-1].lower()
     thissession.status=True
     thissession.endtime=timezone.now()
     thissession.save()

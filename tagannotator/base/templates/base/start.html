@@ -1,0 +1,47 @@
+{% extends "annotate_base.html" %}
+{% load fontawesome %}
+{% load staticfiles %}
+{% fontawesome_stylesheet %}
+
+{% block scripts %}
+<script>
+    function create_session(){
+        username=$('#workerID').val();
+        $.ajax({
+            url:'createsession',
+            method: 'POST',
+            data: {'username':username},
+            success: function(data) {
+                start_session(data)
+        }});
+    }
+    function start_session(data){
+        window.location.href='/base/'+String(data)+'/selectsource';
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div>
+    <h5>Overview</h5>
+    <p>We are going to collect <text class='emph'>1) hashtags and 2) relevant context labels</text> for each hashtag of <text class='emph'>photos that you took</text>.</p>
+    <div style='text-align:center;'>
+        <img style='width:800px;' src="{% static "media/instruction/overview_data.png" %}">
+    </div> 
+    <br><br>
+    <h5>Procedure</h5>
+    <ol>
+        <li>Select/add images. You can user your Instagram posts or photos that you took.        </li>
+        <li>For each image, add 5 hashtags. </li>
+        <li>For each image, select context labels for each hashtag you generated.</li>
+    </ol>
+    <div style='text-align:center;'>
+        <img style='width:800px;' src="{% static "media/instruction/overview_procedure.png" %}">
+    </div> 
+    <div>     
+        <div style='float:right;'>    
+            <button type='button' class='btn btn-primary btn-md' style="margin-top:3px;" onclick='window.location.href="./signin"'>Start</button>
+        </div> 
+    </div> 
+</div>
+{% endblock %}
