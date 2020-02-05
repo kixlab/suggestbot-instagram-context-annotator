@@ -7,12 +7,35 @@
 <link href="{% static "css/annotator.css" %}" rel="stylesheet"> 
 
 <script>
-
+var logs=[]
 // action log (timestamp) 
+$(document).ready(function(){
+    logs.push(['start', 'start_classification', new Date().getTime()]);
+ {% if contextdone %}
+    $('#explanation-button').click(function () {
+        $('#explanation-table').removeClass('invisible')
+    });
+    sleep(50).then(()=>{
+    {% for mapping in mappings %}
+    contextbtn=document.getElementById('tag_{{mapping.tag.pk}}_{{mapping.context.pk}}');
+    contextbtn.classList.add('active');
+    {% endfor%}
+    });
+{% endif %}
+
+})
 
 
+function add_log(contextbtn_id){
+    var contextbtn=document.getElementById(contextbtn_id);
+    if(contextbtn.classList.contains('active')){
+        logs.push(['remove',contextbtn_id, new Date().getTime()]);
+    }else{
+        logs.push(['add', contextbtn_id, new Date().getTime()]);
+    }
+    console.log(logs);
+}
 
-    
 function generate_data(){
     tagholders=document.getElementsByClassName('tag-holder');
     var data=[];
@@ -39,11 +62,12 @@ function save_labels(postorder){
     if(tagcontextdata.length<5){
         window.alert("select at least one context labels for 5+ hashtags")
     }else{
+        logs.push(['save', 'save_classification', new Date().getTime()]);
         $.ajax({
             url:'',
             method: 'POST',
             dataType: 'json',
-            data:{'mappings':JSON.stringify(tagcontextdata)},
+            data:{'mappings':JSON.stringify(tagcontextdata), 'actionlogs':JSON.stringify(logs)},
             success: function(response){
                 if(response["result"]){
                     if(postorder>4){
@@ -57,19 +81,6 @@ function save_labels(postorder){
         });
     }
 }
-{% if contextdone %}
-$(document).ready(function(){
-    $('#explanation-button').click(function () {
-        $('#explanation-table').removeClass('invisible')
-    })
-    sleep(50).then(()=>{
-    {% for mapping in mappings %}
-    contextbtn=document.getElementById('tag_{{mapping.tag.pk}}_{{mapping.context.pk}}');
-    contextbtn.classList.add('active');
-    {% endfor%}
-});
-});
-{% endif %}
 </script>
 {% endblock %}
 
@@ -158,10 +169,10 @@ $(document).ready(function(){
                     <div class='col-md-3 tagtext'><span class='hashtag-noborder' id='tag_{{tag.pk}}'>#{{tag.text}}</span></div>
                     <div class='col-md-8 contextbtns'>
                             <div style="text-align:center">
-                                    <div class="btn-group btn-group-toggle buttons" data-toggle="buttons">
+                                    <div class="btn-group buttons btn-group-toggle" data-toggle="buttons">
                                         {% for context in contexts %}
-                                        <label class="btn btn-outline-info btn-sm btn-context" id='tag_{{tag.pk}}_{{context.pk}}'>
-                                            <input type="checkbox" autocomplete="off" value='{{context.label}}'> {{context.label}} </input>
+                                        <label class="btn btn-outline-info btn-sm btn-context" id='tag_{{tag.pk}}_{{context.pk}}' onmouseup='add_log("tag_{{tag.pk}}_{{context.pk}}")'>
+                                            <input type="checkbox" name='options' value='{{context.label}}' autocomplete='off'> {{context.label}} </input>
                                         </label>
                                         {% endfor %}
                                     </div>

@@ -86,3 +86,10 @@ class Mapping(models.Model):
     context=models.ForeignKey(Context, on_delete=models.CASCADE)
     def __str__(self):
         return self.tag.text +" - "+ self.context.label
+
+class ClassificationLog(models.Model):
+    logs=models.CharField(max_length=9999999)
+    post=models.ForeignKey(Post, on_delete=models.CASCADE)
+    def __str__(self):
+        return 'Log for '+ str(self.post.pk)
+

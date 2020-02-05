@@ -250,6 +250,9 @@ def classification(request, sessionpk, postorder):
         for oldmapping in oldmappings:
             oldmapping.delete()
         mappings=json.loads(request.POST.get('mappings',None))
+        actionlogs=json.loads(request.POST.get('actionlogs',None))
+        newlog=ClassificationLog(logs=actionlogs, post=thispost)
+        newlog.save()
         for mapping in mappings:
             tagpk=mapping["hashtag"]
             selectedcontextpks=mapping["context"]
@@ -288,6 +291,10 @@ def classification_upload(request, sessionpk, uploadpostorder):
         for oldmapping in oldmappings:
             oldmapping.delete()
         mappings=json.loads(request.POST.get('mappings',None))
+        actionlogs=json.loads(request.POST.get('actionlogs',None))
+        newlog=ClassificationLog(logs=actionlogs, post=thispost)
+        newlog.save()
+        print(newlog.logs)
         for mapping in mappings:
             tagpk=mapping["hashtag"]
             selectedcontextpks=mapping["context"]
