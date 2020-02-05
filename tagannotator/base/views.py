@@ -13,10 +13,12 @@ from django.utils import timezone
 from django.contrib import messages
 from django.views import View
 from django.contrib.auth.hashers import make_password, check_password
-import operator
+import operator, os, glob, shutil
 import random
 import string
 import json
+from pathlib import Path
+
 from django.utils.encoding import smart_str
 from random_word import RandomWords
 
@@ -311,5 +313,13 @@ def finish(request, sessionpk):
     thissession.status=True
     thissession.endtime=timezone.now()
     thissession.save()
+
+    dirpath=Path(os.path.dirname(os.path.abspath(__file__))).parent
+    userid=user.username
+    imagefoldername='user_{0}/session_{1}/'.format(userid,sessionpk)
+    imagefolder=dirpath / 'media' / imagefoldername
+    if(os.path.isdir(imagefolder)):
+        shutil.rmtree(imagefolder)
+
     return render(request, 'base/finish.html',{'token':tokentext})
     
