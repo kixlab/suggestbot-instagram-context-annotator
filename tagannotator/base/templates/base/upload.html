@@ -13,11 +13,12 @@
 {% endblock %}
 
 {% block content %}
-<p>
-  <button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#progressbar" aria-expanded="false" aria-controls="progressbar">
-    Click to see your progress.
+<div style='text-align: center; padding-bottom:5px;'>
+  <button class="btn btn-success btn-sm" type="button" data-toggle="collapse" data-target="#progressbar" aria-expanded="false" aria-controls="progressbar">
+  Click to see your progress.
   </button>
 </p>
+</div>  
 <div class='collapse' id='progressbar'>
     <div class='card card-body'>
       <div class='row'>
@@ -85,12 +86,20 @@
     <span class="glyphicon glyphicon-cloud-upload"></span> Click to upload photos
   </button>
 </div>
-<div style='padding-top: 10px; padding-bottom:10px;color:rgb(66, 66, 66); '>
-If you want to upload images in your <b>mobile phone or alternative device</b>, please go to 
-<span id="uri" style="font-weight: bold; text-decoration: underline;color:darkorange;">{{request.build_absolute_uri}}</span> 
-in your mobile phone or device to upload the photos. When you're done uploading the photos, <b>please refresh </b>this page and continue.
-</div>
 
+<div style='padding-top: 10px; padding-bottom:10px;color:rgb(66, 66, 66); '>
+If you want to upload images in your <b>mobile phone or alternative device</b>,  
+ <a style='color:blue;text-decoration: underline;'type='button' data-toggle="collapse" data-target="#mobile_instruction" aria-expanded="false" aria-controls="mobile_instruction">
+  click here
+ </a> to see how to. 
+<div class='collapse' id='mobile_instruction'>
+  <div class='card card-body' style='display:block;padding-bottom: 10px;'>
+    Please go to <text id="uri" style="font-weight: bold; text-decoration: underline;color:darkorange;">{{request.build_absolute_uri}}</text> in your mobile phone or device to upload the photos. 
+    <br>
+    When you're done uploading the photos, <b>refresh </b>this page and continue.
+    </div>    
+  </div>
+</div>
 {# 2. FILE INPUT TO BE USED BY THE PLUG-IN #}
 <input id="fileupload" type="file" name="file" multiple
         style="display: none;"
