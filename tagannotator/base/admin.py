@@ -10,4 +10,5 @@ admin.site.register(Mapping)
 admin.site.register(InstaPost)
 admin.site.register(UploadPost)
 admin.site.register(Photo)
+admin.site.register(ClassificationLog)
 
