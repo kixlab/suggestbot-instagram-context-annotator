@@ -32,6 +32,7 @@ function show_hashtags(hashtags){
 
 function add_tag(){
     newtagtext=$('#hashtag_input').val().replace('#','');
+    console.log(newtagtext)
     duplicate=false;
     for (var i=0;i<hashtags.length;i++){
         hashtag=hashtags[i];
@@ -43,7 +44,7 @@ function add_tag(){
     if (duplicate){
         window.alert("no duplicated tags allowed")
     }else{
-        if(newtagtest.length<2){
+        if(newtagtext.length<2){
             window.alert("hashtag should have at least 2 characters")
         }else{
         hashtags.push([newtagtext, 'user'])
