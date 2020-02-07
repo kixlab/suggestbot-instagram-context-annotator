@@ -52,7 +52,7 @@ def create_session(request):
 def accountinfo(request, sessionpk):
     user=request.user
     thissession=Session.objects.get(pk=sessionpk)
-    if(check_iser(user, thissession)):
+    if(check_user(user, thissession)):
         if request.method=="GET":
             return render(request, 'base/accountinfo.html', {})
         if request.method=="POST":
@@ -85,7 +85,7 @@ def accountinfo(request, sessionpk):
 def checkpost(request, sessionpk):
     user=request.user
     thissession=Session.objects.get(pk=sessionpk)
-    if(check_iser(user, thissession)):
+    if(check_user(user, thissession)):
         if request.method=="POST":
             userid=request.POST.get('userid',None)
             posturl=request.POST.get('posturl', None)
@@ -126,7 +126,7 @@ class BasicUploadView(View):
     def get(self, request, sessionpk):
         user=request.user
         thissession=Session.objects.get(pk=sessionpk)
-        if(check_iser(user, thissession)):
+        if(check_user(user, thissession)):
             photos_list = Photo.objects.filter(session=thissession)
             return render(self.request, 'base/upload.html', {'photos': photos_list, 'source':'upload'})
         else:
@@ -188,7 +188,7 @@ def createposts_upload(request, sessionpk):
 def addtags(request,sessionpk, postorder):
     user=request.user
     thissession=Session.objects.get(pk=sessionpk)
-    if(check_iser(user, thissession)):
+    if(check_user(user, thissession)):
         posturls=request.session['posturls']
         thisurl=posturls[postorder-1]
         originalpostid=thisurl.split('/')[-2]
@@ -221,7 +221,7 @@ def addtags(request,sessionpk, postorder):
 def generatetags(request, sessionpk, uploadpostorder):
     user=request.user 
     thissession=Session.objects.get(pk=sessionpk)
-    if(check_iser(user, thissession)):
+    if(check_user(user, thissession)):
         thisuploadpost=UploadPost.objects.filter(uploadedphoto__session=thissession).order_by('pk')[uploadpostorder-1]
         thispost=thisuploadpost.post
         if request.method=="GET":
@@ -246,7 +246,7 @@ def generatetags(request, sessionpk, uploadpostorder):
 def classification(request, sessionpk, postorder):
     user=request.user
     thissession=Session.objects.get(pk=sessionpk)
-    if(check_iser(user, thissession)):
+    if(check_user(user, thissession)):
         posturls=request.session['posturls']
         thisurl=posturls[postorder-1]
         originalpostid=thisurl.split('/')[-2]
@@ -297,7 +297,7 @@ def classification(request, sessionpk, postorder):
 def classification_upload(request, sessionpk, uploadpostorder):
     user=request.user 
     thissession=Session.objects.get(pk=sessionpk)
-    if(check_iser(user, thissession)):
+    if(check_user(user, thissession)):
         thisuploadpost=UploadPost.objects.filter(uploadedphoto__session=thissession).order_by('pk')[uploadpostorder-1]
         thispost=thisuploadpost.post
         if request.method=="GET":
@@ -341,7 +341,7 @@ def classification_upload(request, sessionpk, uploadpostorder):
 def finish(request, sessionpk):
     user=request.user 
     thissession=Session.objects.get(pk=sessionpk)
-    if(check_iser(user, thissession)):
+    if(check_user(user, thissession)):
         tokens=thissession.token
         tokentext=tokens.replace("'","")[1:-1].lower()
         thissession.status=True
