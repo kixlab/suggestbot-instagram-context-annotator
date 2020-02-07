@@ -10,7 +10,7 @@
 var logs=[]
 // action log (timestamp) 
 $(document).ready(function(){
-    logs.push(['start', 'start_classification', new Date().getTime()]);
+    logs.push(['startpage', 'start','start', new Date().getTime()]);
  {% if contextdone %}
     $('#explanation-button').click(function () {
         $('#explanation-table').removeClass('invisible')
@@ -62,7 +62,7 @@ function save_labels(postorder){
     if(tagcontextdata.length<5){
         window.alert("select at least one context labels for 5+ hashtags")
     }else{
-        logs.push(['save', 'save_classification', new Date().getTime()]);
+        logs.push(['savepage', 'save','save', new Date().getTime()]);
         $.ajax({
             url:'',
             method: 'POST',
