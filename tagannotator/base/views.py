@@ -13,6 +13,7 @@ from django.utils import timezone
 from django.contrib import messages
 from django.views import View
 from django.contrib.auth.hashers import make_password, check_password
+from .nlp import *
 import operator, os, glob, shutil
 import random
 import string
@@ -214,6 +215,20 @@ def generatetags(request, sessionpk, uploadpostorder):
         thispost.tagdone=True
         thispost.save()
         return HttpResponse(json.dumps({'result':True}),content_type="application/json")
+
+@csrf_exempt
+def predict_tag(request, tag):
+
+    if request.method == 'GET':
+        contexts, res = predict(tag)
+        if res is None:
+            return HttpResponse(json.dumps(None), content_type="application/json")
+        else:
+            result = {}
+            for i in range(len(contexts)):
+                result[contexts[i]] = res[0][i]
+            return HttpResponse(json.dumps(result), content_type="application/json")
+
 
 @csrf_exempt
 def classification(request, sessionpk, postorder):

@@ -11,21 +11,42 @@ var logs=[]
 // action log (timestamp) 
 $(document).ready(function(){
     logs.push(['start', 'start_classification', new Date().getTime()]);
- {% if contextdone %}
-    $('#explanation-button').click(function () {
-        $('#explanation-table').removeClass('invisible')
-    });
-    sleep(50).then(()=>{
-    {% for mapping in mappings %}
-    contextbtn=document.getElementById('tag_{{mapping.tag.pk}}_{{mapping.context.pk}}');
-    contextbtn.classList.add('active');
-    {% endfor%}
-    });
-{% endif %}
+    {% if contextdone %}
+        $('#explanation-button').click(function () {
+            $('#explanation-table').removeClass('invisible')
+        });
+        sleep(50).then(()=>{
+            {% for mapping in mappings %} // retrieve previous mappings
+                contextbtn=document.getElementById('tag_{{mapping.tag.pk}}_{{mapping.context.pk}}');
+                contextbtn.classList.add('active');
+            {% endfor%}
+        });
+
+    {% endif %}
+
+    $('.row .tag-holder').each((idx, element) => {
+        get_predictions(element.id)
+    })
+        // get_predictions({{tag.text}})
 
 })
 
-
+function get_predictions(tag) {
+    $.get(`/base/predict/${tag}`).then((res, status) => {
+        const sortedVals = Object.values(res).sort().reverse()
+        for (const context in res) {
+            if (res[context] > 0.5) { //every context with score >0
+                $(`#${tag} .${context}`).addClass('suggestion top')
+            } else if (res[context] === sortedVals[0]) {
+                $(`#${tag} .${context}`).addClass('suggestion one')
+            } else if (res[context] === sortedVals[1]) {
+                $(`#${tag} .${context}`).addClass('suggestion two')
+            } else if (res[context] === sortedVals[2]) {
+                $(`#${tag} .${context}`).addClass('suggestion three')
+            }
+        }
+    })
+}
 function add_log(contextbtn_id){
     var contextbtn=document.getElementById(contextbtn_id);
     if(contextbtn.classList.contains('active')){
@@ -166,13 +187,13 @@ function save_labels(postorder){
             <p class='notes'>* Note that you can select multiple context labels for each hashtag.</p>
             <div id="classification-holder" class="holder">
                 {% for tag in tags %}
-                <div class='row tag-holder'>
+                <div class='row tag-holder' id="{{tag.text}}">
                     <div class='col-md-3 tagtext'><span class='hashtag-noborder' id='tag_{{tag.pk}}'>#{{tag.text}}</span></div>
                     <div class='col-md-8 contextbtns'>
                             <div style="text-align:center">
                                     <div class="btn-group buttons btn-group-toggle" data-toggle="buttons">
                                         {% for context in contexts %}
-                                        <label class="btn btn-outline-info btn-sm btn-context" id='tag_{{tag.pk}}_{{context.pk}}' onmouseup='add_log("tag_{{tag.pk}}_{{context.pk}}")'>
+                                        <label class="btn btn-outline-info btn-sm btn-context {{context.label}}" data-ctx="{{context.label}}" id='tag_{{tag.pk}}_{{context.pk}}' onmouseup='add_log("tag_{{tag.pk}}_{{context.pk}}")'>
                                             <input type="checkbox" name='options' value='{{context.label}}' autocomplete='off'> {{context.label}} </input>
                                         </label>
                                         {% endfor %}

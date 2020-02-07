@@ -159,3 +159,23 @@
   margin:0px;
   background-color: transparent;
 }
+
+.btn-context.suggestion.top {
+  color: white;
+  background-color: #1a17b8e0;
+}
+
+.btn-context.suggestion.one {
+  color: white;
+  background-color: #1a17b8cb;
+}
+
+.btn-context.suggestion.two {
+  color: white;
+  background-color: #1a17b87e;
+}
+
+.btn-context.suggestion.three {
+  color: white;
+  background-color: #1a17b836;
+}

@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf.urls import url, include
 from django.views.generic import TemplateView
-
+from .nlp import initialize
 
 from . import views
 
@@ -34,6 +34,12 @@ urlpatterns = [
     # end page
     path('<int:sessionpk>/upload/classification/finish/',views.finish, name='finish'),    
 
+    # prediction
+    
+    path('predict/<slug:tag>', views.predict_tag, name='predict'),
+
     # image upload from other device 
     path('<int:sessionpk>/otherdevice/',TemplateView.as_view(template_name='base/choosedevice.html')),    
 ]
+
+initialize()
