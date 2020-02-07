@@ -126,11 +126,8 @@ class BasicUploadView(View):
     def get(self, request, sessionpk):
         user=request.user
         thissession=Session.objects.get(pk=sessionpk)
-        if(check_user(user, thissession)):
-            photos_list = Photo.objects.filter(session=thissession)
-            return render(self.request, 'base/upload.html', {'photos': photos_list, 'source':'upload'})
-        else:
-            return render(request, 'base/invaliduser.html')
+        photos_list = Photo.objects.filter(session=thissession)
+        return render(self.request, 'base/upload.html', {'photos': photos_list, 'source':'upload'})
 
     def post(self, request, sessionpk):
         thissession=Session.objects.get(pk=sessionpk)
