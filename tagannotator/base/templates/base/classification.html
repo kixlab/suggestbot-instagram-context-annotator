@@ -26,12 +26,12 @@ $(document).ready(function(){
 })
 
 
-function add_log(contextbtn_id){
+function add_log(contextbtn_id,actiontype){
     var contextbtn=document.getElementById(contextbtn_id);
     if(contextbtn.classList.contains('active')){
-        logs.push(['remove',contextbtn_id, new Date().getTime()]);
+        logs.push([actiontype,'remove',contextbtn_id, new Date().getTime()]);
     }else{
-        logs.push(['add', contextbtn_id, new Date().getTime()]);
+        logs.push([actiontype,'add', contextbtn_id, new Date().getTime()]);
     }
     console.log(logs);
 }
@@ -172,7 +172,7 @@ function save_labels(postorder){
                             <div style="text-align:center">
                                     <div class="btn-group buttons btn-group-toggle" data-toggle="buttons">
                                         {% for context in contexts %}
-                                        <label class="btn btn-outline-info btn-sm btn-context" id='tag_{{tag.pk}}_{{context.pk}}' onmouseup='add_log("tag_{{tag.pk}}_{{context.pk}}")'>
+                                        <label class="btn btn-outline-info btn-sm btn-context" id='tag_{{tag.pk}}_{{context.pk}}' onmouseup='add_log("tag_{{tag.pk}}_{{context.pk}}", "mouseup")' onmousedown='add_log("tag_{{tag.pk}}_{{context.pk}}", "mousedown")'>
                                             <input type="checkbox" name='options' value='{{context.label}}' autocomplete='off'> {{context.label}} </input>
                                         </label>
                                         {% endfor %}
