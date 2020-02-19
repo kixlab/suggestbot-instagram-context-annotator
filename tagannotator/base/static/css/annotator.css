@@ -163,19 +163,20 @@
 .btn-context.suggestion.top {
   color: white;
   background-color: #1a17b8e0;
+  border-color: #1a17b8e0;
 }
 
 .btn-context.suggestion.one {
   color: white;
-  background-color: #1a17b8cb;
+  background-color: #1a17b8aa;
 }
 
 .btn-context.suggestion.two {
   color: white;
-  background-color: #1a17b87e;
+  background-color: #1a17b855;
 }
 
 .btn-context.suggestion.three {
   color: white;
-  background-color: #1a17b836;
+  background-color: #1a17b822;
 }

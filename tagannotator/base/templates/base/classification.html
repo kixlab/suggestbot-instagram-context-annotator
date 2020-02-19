@@ -33,9 +33,9 @@ $(document).ready(function(){
 
 function get_predictions(tag) {
     $.get(`/base/predict/${tag}`).then((res, status) => {
-        const sortedVals = Object.values(res).sort().reverse()
+        const sortedVals = Object.values(res).sort((a, b) => {return a - b})
         for (const context in res) {
-            if (res[context] > 0.5) { //every context with score >0
+            if (res[context] < -1) { //every context with z-score < -0.5
                 $(`#${tag} .${context}`).addClass('suggestion top')
             } else if (res[context] === sortedVals[0]) {
                 $(`#${tag} .${context}`).addClass('suggestion one')
