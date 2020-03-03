@@ -217,18 +217,36 @@ def generatetags(request, sessionpk, uploadpostorder):
         return HttpResponse(json.dumps({'result':True}),content_type="application/json")
 
 @csrf_exempt
-def predict_tag(request, tag):
+def predict_tag(request, tag, pk):
 
     if request.method == 'GET':
         contexts, res = predict(tag)
+        tag = Tag.objects.get(pk=pk)
         if res is None:
+            tag.prediction = json.dumps(None)
+            tag.save()
             return HttpResponse(json.dumps(None), content_type="application/json")
         else:
             result = {}
             for i in range(len(contexts)):
                 result[contexts[i]] = res[0][i]
+            tag.prediction = json.dumps(result)
             return HttpResponse(json.dumps(result), content_type="application/json")
 
+# @csrf_exempt
+# def fetch_prediction(request, tag):
+
+#     if request.method == 'POST':
+#         contexts, res = predict(tag)
+
+
+        # if res is None:
+        #     return HttpResponse(json.dumps(None), content_type="application/json")
+        # else:
+        #     result = {}
+        #     for i in range(len(contexts)):
+        #         result[contexts[i]] = res[0][i]
+        #     return HttpResponse(json.dumps(result), content_type="application/json")
 
 @csrf_exempt
 def classification(request, sessionpk, postorder):

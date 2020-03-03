@@ -161,22 +161,41 @@
 }
 
 .btn-context.suggestion.top {
-  color: white;
-  background-color: #1a17b8e0;
-  border-color: #1a17b8e0;
+  /* color: white; */
+  /* background-color: #1a17b8e0; */
+  border-width: 2px;
+  font-weight: bold;
+  background-color: #17a2b840;
+
 }
 
 .btn-context.suggestion.one {
-  color: white;
-  background-color: #1a17b8aa;
+  /* color: white; */
+  border-width: 2px;
+  font-weight: bold;
+  background-color: #17a2b840;
+
+  /* font-weight: 550; */
 }
 
 .btn-context.suggestion.two {
-  color: white;
-  background-color: #1a17b855;
+  /* color: white; */
+  border-width: 2px;
+  background-color: #17a2b840;
+  /* border-style: dashed; */
+
+  /* font-weight: 550; */
 }
 
 .btn-context.suggestion.three {
+  background-color: #17a2b840;
+  border-width: 1px;
+  border-style: hidden;
+  /* color: white; */
+}
+
+.btn-context.suggestion:hover {
   color: white;
-  background-color: #1a17b822;
+  background-color: #17a2b8;
+  border-color: #17a2b8;
 }

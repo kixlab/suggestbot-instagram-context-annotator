@@ -25,18 +25,18 @@ $(document).ready(function(){
     {% endif %}
 
     $('.row .tag-holder').each((idx, element) => {
-        get_predictions(element.id)
+        get_predictions(element.id, element.dataset['pk'])
     })
         // get_predictions({{tag.text}})
 
 })
 
-function get_predictions(tag) {
-    $.get(`/base/predict/${tag}`).then((res, status) => {
+function get_predictions(tag, pk) {
+    $.get(`/base/predict/${tag}/${pk}`).then((res, status) => {
         const sortedVals = Object.values(res).sort((a, b) => {return a - b})
         for (const context in res) {
             if (res[context] < -1) { //every context with z-score < -0.5
-                $(`#${tag} .${context}`).addClass('suggestion top')
+                $(`#${tag} .${context}`).addClass('suggestion top shadow')
             } else if (res[context] === sortedVals[0]) {
                 $(`#${tag} .${context}`).addClass('suggestion one')
             } else if (res[context] === sortedVals[1]) {
@@ -50,9 +50,9 @@ function get_predictions(tag) {
 function add_log(contextbtn_id){
     var contextbtn=document.getElementById(contextbtn_id);
     if(contextbtn.classList.contains('active')){
-        logs.push(['remove',contextbtn_id, new Date().getTime()]);
+        logs.push(['remove',contextbtn_id, contextbtn.classList, new Date().getTime()]);
     }else{
-        logs.push(['add', contextbtn_id, new Date().getTime()]);
+        logs.push(['add', contextbtn_id, contextbtn.classList, new Date().getTime()]);
     }
     console.log(logs);
 }
@@ -187,7 +187,7 @@ function save_labels(postorder){
             <p class='notes'>* Note that you can select multiple context labels for each hashtag.</p>
             <div id="classification-holder" class="holder">
                 {% for tag in tags %}
-                <div class='row tag-holder' id="{{tag.text}}">
+                <div class='row tag-holder' id="{{tag.text}}" data-pk="{{tag.pk}}">
                     <div class='col-md-3 tagtext'><span class='hashtag-noborder' id='tag_{{tag.pk}}'>#{{tag.text}}</span></div>
                     <div class='col-md-8 contextbtns'>
                             <div style="text-align:center">

@@ -36,7 +36,7 @@ urlpatterns = [
 
     # prediction
     
-    path('predict/<slug:tag>', views.predict_tag, name='predict'),
+    path('predict/<slug:tag>/<int:pk>', views.predict_tag, name='predict'),
 
     # image upload from other device 
     path('<int:sessionpk>/otherdevice/',TemplateView.as_view(template_name='base/choosedevice.html')),    
