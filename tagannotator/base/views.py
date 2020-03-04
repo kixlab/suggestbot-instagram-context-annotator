@@ -231,6 +231,7 @@ def predict_tag(request, tag, pk):
             for i in range(len(contexts)):
                 result[contexts[i]] = res[0][i]
             tag.prediction = json.dumps(result)
+            tag.save()
             return HttpResponse(json.dumps(result), content_type="application/json")
 
 # @csrf_exempt
