@@ -10,7 +10,7 @@ import wordninja
 embedding_dict = {}
 clf = None
 
-contexts = ['activity', 'emotion', 'event', 'location', 'mood', 'objects', 'time'] 
+contexts = ['activity', 'emotion', 'event', 'location', 'mood', 'object', 'time'] 
 stop_words = []
 
 def initialize():
